@@ -25,7 +25,9 @@
           <input type="text" name="id" :value="person.phone" v-model="person.phone"/>
         </div>
         <div class="field" style="text-align:center;">
-          <button class="add-btn" @click="addPerson">添加</button>
+          <button class="add-btn" @keyup.enter="addPerson" @click="addPerson">
+            添加
+          </button>
         </div>
     </div>
     <table id="person-info">
@@ -47,13 +49,20 @@
           <td>{{ p.email }}</td>
           <td>{{ p.phone }}</td>
           <td>
-            <button class="del-btn" @click="delPerson(index)">删除</button>
+            <button class="del-btn" @keyup.delete="delPerson(index)" @click="delPerson(index)">删除</button>
           </td>
         </tr>
       </tbody>
     </table>
-    <div v-if="show" transition="expand">hello</div>
-    <button @click="toggle">Toggle</button>
+    <div>
+      <input type="text" v-model.trim="msg"/>
+      <h3>message: {{ msg }}</h3>
+    </div>
+    <!-- <div>
+      <span v-for="n in evenNumbers">
+        {{ n }}
+      </span>
+    </div> -->
   </div>
 </template>
 
@@ -62,6 +71,8 @@ export default {
   name: 'content',
   data () {
     return {
+      msg: "",
+      numbers: [1,2,3,4,5,6,7,8,9,10],
       isTableHeader: true,
       show: true,
       persons: [],
@@ -75,38 +86,35 @@ export default {
     }
   },
   computed: {
+    evenNumbers: function () {
+      return this.numbers.filter(function (number) {
+        return number % 2 === 0;
+      });
+    },
     b: function() {
       return this.a + 1;
-    }
-  },
-  transitions: {
-    expand: {
-      beforeEnter: function (el) {
-        el.textContent = 'beforeEnter'
-      },
-      enter: function (el) {
-        el.textContent = 'enter'
-      },
-      afterEnter: function (el) {
-        el.textContent = 'afterEnter'
-      },
-      beforeLeave: function (el) {
-        el.textContent = 'beforeLeave'
-      },
-      leave: function (el) {
-        el.textContent = 'leave'
-      },
-      afterLeave: function (el) {
-        el.textContent = 'afterLeave'
-      }
     }
   },
   methods: {
     toggle: function() {
       this.show = !this.show;
     },
+    exitPerson: function(person) {
+      // console.log("add person: ",person);
+      // console.log("id: ",person.id);
+      var id = parseInt(person.Id);
+      for (var i = 0; i < this.persons.length; ++i) {
+        console.log("p: ",this.persons[i]);
+        var pid = parseInt(this.persons[i].Id);
+        // console.log(pid + "," + id);
+        if (pid === id) {
+          return true;
+        }
+      }
+      return false;
+    },
     addPerson: function () {
-        console.log("person",this.person.name);
+        // console.log("person",this.person.name);
         var addPerson = {
           Id: this.person.Id,
           name: this.person.name,
@@ -114,12 +122,17 @@ export default {
           email: this.person.email,
           phone: this.person.phone
         }
-        this.persons.push(addPerson);
-        this.person.Id = 0;
-        this.person.name = "summer";
-        this.person.age = 0;
-        this.person.email = "summer@sina.com";
-        this.person.phone = "18883308404";
+        if (this.exitPerson(addPerson)) {
+          alert("Already exists this person information!");
+          // return;
+        } else {
+          this.persons.push(addPerson);
+          this.person.Id = 0;
+          this.person.name = "summer";
+          this.person.age = 0;
+          this.person.email = "summer@sina.com";
+          this.person.phone = "18883308404";
+        }
     } ,
     delPerson: function (index) {
       this.persons.splice(index,1);
@@ -138,26 +151,12 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-/* 必需 */
-.expand-transition {
-transition: all .3s ease;
-height: 30px;
-padding: 10px;
-background-color: #eee;
-overflow: hidden;
-}
-/* .expand-enter 定义进入的开始状态 */
-/* .expand-leave 定义离开的结束状态 */
-.expand-enter, .expand-leave {
-height: 0;
-padding: 0 10px;
-opacity: 0;
-}
 .active {
   background-color: #e3e3e3;
 }
 .content {
   display: inline-block;
+  margin-left: 120px;
 }
 .content .add-person {
   width: 1200px;

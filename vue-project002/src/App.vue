@@ -4,8 +4,15 @@
     <hello></hello>
     <ol>
       <!-- <li>{{fruits}}</li> -->
-      <to-list v-for="fruit in fruits" v-bind:name="fruit"></to-list>
+      <to-list v-for="(fruit,index) of fruits" v-bind:name="fruit"></to-list>
     </ol>
+    <div id="pros">
+      <ul>
+        <li v-for="(province,capital,index) in provinces">
+          {{index}}. {{province}}--{{capital}}
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -15,7 +22,7 @@ import Vue from 'vue'
 
 Vue.component('to-list',{
   props: ['name'],
-  template: '<li>{{ name.text }}</li><'
+  template: '<li>{{ name.index }}-{{ name.text }}</li>'
 });
 
 export default {
@@ -28,7 +35,14 @@ export default {
         {text: 'pear'},
         {text: 'watermelon'},
         {text: 'orange'}
-      ]
+      ],
+      provinces: {
+        '贵州': '贵阳',
+        '云南': '昆明',
+        '四川': '成都',
+        '湖北': '武汉',
+        '浙江': '杭州'
+      }
     }
   },
   components: {
