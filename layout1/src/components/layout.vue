@@ -1,24 +1,16 @@
 <template>
 	<el-container class="s-outer-container">
-		<!-- <AppAside></AppAside>
-		<el-container>
-			<AppHeader></AppHeader>
-			<AppMain>App Main Content</AppMain>
-			<AppFooter>App Footer</AppFooter>
-		</el-container> -->
-		<el-header>
-				<AppHeader></AppHeader>
-		</el-header>
-		
+		<el-aside width="200px">
+			<AppAside></AppAside>
+		</el-aside>
 		<el-container class="s-inner-container">
-			<el-aside>
-				<AppAside></AppAside>
-			</el-aside>
-			<!-- <el-main>
+			<el-header>
+				<AppHeader></AppHeader>
+			</el-header>
+			<el-main>
 				<AppMain></AppMain>
-			</el-main> -->
+			</el-main>
 		</el-container>
-		<slot name="container"></slot>
 	</el-container>
 </template>
 <script>
@@ -44,5 +36,6 @@
 	}
 	.s-inner-container {
 		z-index: 9999;
+		margin: 0px;
 	}
 </style>

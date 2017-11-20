@@ -1,10 +1,7 @@
 <template>
 	<!-- <el-aside> -->
-		<el-menu default-active="1-4-1" class="el-menu-vertical-demo s-aside-menu" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
-		  <el-menu-item index="1" style="text-align:center;">
-		  		<i class="el-icon-more" @click="expand"></i>
-		  		<span @click="expand">VUEAmin</span>
-		  </el-menu-item>
+		<el-menu default-active="1-4-1" class="el-menu-vertical-demo s-aside-menu" @open="handleOpen" @close="handleClose" active-text-color="#42b983">
+		  <div class="log">VUEAmin</div>
 		  <el-submenu index="2">
 		    <template slot="title">
 		      <i class="el-icon-location"></i>
@@ -48,6 +45,10 @@
 	<!-- </el-aside> -->
 </template>
 <style>
+	a,a:visited {
+		text-decoration: none;
+		outline: none;
+	}
   .el-menu-vertical-demo:not(.el-menu--collapse) {
     /*width: 300px;*/
     min-height: 400px;
@@ -55,6 +56,13 @@
   }
   .s-aside-menu {
   	height: 100%;
+  }
+  .log {
+	padding:15px;
+	font-weight:bolder;
+	font-size: 24px;
+	text-align:center;
+	color:#42b983;
   }
 </style>
 <script>
