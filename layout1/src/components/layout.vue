@@ -5,10 +5,10 @@
 		</el-aside>
 		<el-container class="s-inner-container">
 			<el-header>
-				<AppHeader></AppHeader>
+				<AppHeader/>
 			</el-header>
 			<el-main>
-				<AppMain></AppMain>
+				<AppMain/>
 			</el-main>
 		</el-container>
 	</el-container>
@@ -31,11 +31,11 @@
 </script>
 <style type="text/css">
 	.s-outer-container {
-		z-index: 99999;
+		/*z-index: 99999;*/
 		height: 100%;
 	}
 	.s-inner-container {
-		z-index: 9999;
+		/*z-index: 9999;*/
 		margin: 0px;
 	}
 </style>

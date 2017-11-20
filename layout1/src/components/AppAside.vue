@@ -1,6 +1,10 @@
 <template>
 	<!-- <el-aside> -->
-		<el-menu default-active="1-4-1" class="el-menu-vertical-demo s-aside-menu" @open="handleOpen" @close="handleClose" active-text-color="#42b983">
+		<el-menu default-active="1-4-1" 
+		class="el-menu-vertical-demo hidden-sm-and-down s-aside-menu" 
+		@open="handleOpen" 
+		@close="handleClose" 
+		active-text-color="#42b983">
 		  <div class="log">VUEAmin</div>
 		  <el-submenu index="2">
 		    <template slot="title">
