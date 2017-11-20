@@ -17,17 +17,15 @@
       <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
       <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
     </ul>
-    <div v-if="flag == 'yes'">Say Hello to you.</div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'hello',
+  name: 'HelloWorld',
   data () {
     return {
-      msg: 'Welcome to Your Vue.js App',
-      flag: 'yes'
+      msg: 'Welcome to Your Vue.js App'
     }
   }
 }
@@ -38,17 +36,14 @@ export default {
 h1, h2 {
   font-weight: normal;
 }
-
 ul {
   list-style-type: none;
   padding: 0;
 }
-
 li {
   display: inline-block;
   margin: 0 10px;
 }
-
 a {
   color: #42b983;
 }
