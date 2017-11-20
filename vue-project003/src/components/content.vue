@@ -52,16 +52,27 @@
         </tr>
       </tbody>
     </table>
-    <div v-if="show" transition="expand">hello</div>
-    <button @click="toggle">Toggle</button>
+    <div>
+      <simple-counter></simple-counter>
+      <simple-counter></simple-counter>
+    </div>
   </div>
 </template>
 
 <script>
+import Vue from 'vue'
+// var data = {counter: 0}
+Vue.component('simple-counter',{
+  template: '<button @click="counter += 1">{{ counter }}</button>',
+  data: function () {
+    return {counter:0};
+  }
+});
 export default {
   name: 'content',
   data () {
     return {
+      foo: false,
       isTableHeader: true,
       show: true,
       persons: [],
