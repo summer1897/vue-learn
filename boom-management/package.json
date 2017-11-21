@@ -1,7 +1,7 @@
 {
-  "name": "layout1",
+  "name": "boom-management",
   "version": "1.0.0",
-  "description": "this is a page template",
+  "description": "this is a management system built by vue",
   "author": "summer",
   "private": true,
   "scripts": {
@@ -10,8 +10,6 @@
     "build": "node build/build.js"
   },
   "dependencies": {
-    "node-sass": "^4.7.2",
-    "sass-loader": "^6.0.6",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },
@@ -26,14 +24,14 @@
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
+    "element-ui": "^2.0.5",
     "eventsource-polyfill": "^0.9.6",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^2.30.1",
-    "jquery": "^3.2.1",
     "node-notifier": "^5.1.2",
-    "node-sass": "^4.7.1",
+    "node-sass": "^4.7.2",
     "optimize-css-assets-webpack-plugin": "^3.2.0",
     "ora": "^1.2.0",
     "portfinder": "^1.0.13",
