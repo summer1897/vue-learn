@@ -1,11 +1,15 @@
 <template>
-	<!-- <el-aside> -->
 		<el-menu default-active="1-4-1" 
-		class="el-menu-vertical-demo hidden-sm-and-down s-aside-menu" 
-		@open="handleOpen" 
-		@close="handleClose" 
-		active-text-color="#42b983">
-		  <div class="log">VUEAmin</div>
+			class="el-menu-vertical-demo hidden-sm-and-down s-aside-menu" 
+			@open="handleOpen" 
+			@close="handleClose" 
+			active-text-color="#42b983"
+			:collapse="isCollapse"
+		>
+		  <div class="log" @click="expand">
+		  	<i style="font-weight:bolder;" class="el-icon-d-arrow-right" v-show="!show"></i>
+		  	<span class="log-title" v-show="show">VUEAmin</span>
+		  </div>
 		  <el-submenu index="2">
 		    <template slot="title">
 		      <i class="el-icon-location"></i>
@@ -17,12 +21,12 @@
 		      <el-menu-item index="2-2">选项2</el-menu-item>
 		    </el-menu-item-group>
 		    <el-menu-item-group title="分组2">
-		      <el-menu-item index="2-3">选项3</el-menu-item>
-		    </el-menu-item-group>
-		    <el-submenu index="2-4">
-		      <span slot="title">选项4</span>
-		      <el-menu-item index="2-4-1">选项1</el-menu-item>
-		    </el-submenu>
+      <el-menu-item index="1-3">选项3</el-menu-item>
+    </el-menu-item-group>
+    <el-submenu index="1-4">
+      <span slot="title">选项4</span>
+      <el-menu-item index="1-4-1">选项1</el-menu-item>
+    </el-submenu>
 		  </el-submenu>
 		  <el-menu-item index="3">
 		    <i class="el-icon-menu"></i>
@@ -45,8 +49,7 @@
 		    <span slot="title">导航六</span>
 		  </el-menu-item>
 		</el-menu>
-		<!-- <slot name="aside"></slot> -->
-	<!-- </el-aside> -->
+		<!---->
 </template>
 <style>
 	a,a:visited {
@@ -54,19 +57,20 @@
 		outline: none;
 	}
   .el-menu-vertical-demo:not(.el-menu--collapse) {
-    /*width: 300px;*/
+    width: 200px;
     min-height: 400px;
-    z-index: 99999;
+    /*z-index: 99999;*/
   }
   .s-aside-menu {
   	height: 100%;
   }
   .log {
 	padding:15px;
+	color:#42b983;
+	cursor: pointer;
+	text-align:center;
 	font-weight:bolder;
 	font-size: 24px;
-	text-align:center;
-	color:#42b983;
   }
 /*默认滚动条样式*/
 ::-webkit-scrollbar {
@@ -92,12 +96,14 @@
   export default {
     data() {
       return {
-        isCollapse: false
+        isCollapse: false,
+        show: true
       };
     },
     methods: {
       expand: function () {
       	this.isCollapse = !this.isCollapse;
+      	this.show = !this.show;
       },
       handleOpen(key, keyPath) {
         console.log(key, keyPath);

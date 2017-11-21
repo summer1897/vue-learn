@@ -1,17 +1,25 @@
 <template>
 	<el-container class="s-outer-container">
-		<el-aside width="200px">
-			<AppAside></AppAside>
+		<el-aside>
+			<AppAside/>
 		</el-aside>
 		<el-container class="s-inner-container">
-			<!-- <el-header>
+			<el-header>
 				<AppHeader/>
-			</el-header> -->
+			</el-header>
 			<el-main>
 				<AppMain/>
 			</el-main>
 		</el-container>
 	</el-container>
+	<!--<el-row class="s-container">
+		<el-col class="s-aside-menu" :span="3">
+			<AppAside/>
+		</el-col>
+		<el-col class="s-main-content" :span="21">
+			<AppMain/>
+		</el-col>
+	</el-row>-->
 </template>
 <script>
 	import AppHeader from './AppHeader'
@@ -29,7 +37,23 @@
 		components: {AppHeader,AppAside,AppMain,AppFooter}
 	}
 </script>
-<style type="text/css">
+<style scoped lang="scss">
+	// .s-container {
+	// 	position: absolute;
+	// 	display: flex;
+	// 	top: 0px;
+	// 	bottom: 0px;
+	// 	width: 100%;
+	// 	.s-aside-menu {
+	// 		flex: 0 0 200px;
+	// 		width: 200px;
+
+	// 	}
+	// 	.s-main-content {
+	// 		flex: 1;
+	// 		overflow-y: scroll; 
+	// 	}
+	// }
 	.s-outer-container {
 		/*z-index: 99999;*/
 		height: 100%;
