@@ -5,72 +5,63 @@
 			@close="handleClose" 
 			active-text-color="#42b983"
 			:collapse="isCollapse"
+			router
 		>
 		  <div class="log" @click="expand">
-		  	<i style="font-weight:bolder;" class="el-icon-d-arrow-right" v-show="!show"></i>
+		  	<i style="font-weight:bolder;" class="el-icon-menu" v-show="!show"></i>
 		  	<span class="log-title" v-show="show">VUEAmin</span>
 		  </div>
-		  <el-submenu index="2">
-		    <template slot="title">
-		      <i class="el-icon-location"></i>
-		      <span slot="title">导航一</span>
-		    </template>
-		    <el-menu-item-group>
-		      <span slot="title">分组一</span>
-		      <el-menu-item index="2-1">选项1</el-menu-item>
-		      <el-menu-item index="2-2">选项2</el-menu-item>
-		    </el-menu-item-group>
-		    <el-menu-item-group title="分组2">
-      <el-menu-item index="1-3">选项3</el-menu-item>
-    </el-menu-item-group>
-    <el-submenu index="1-4">
-      <span slot="title">选项4</span>
-      <el-menu-item index="1-4-1">选项1</el-menu-item>
-    </el-submenu>
-		  </el-submenu>
-		  <el-menu-item index="3">
-		    <i class="el-icon-menu"></i>
-		    <span slot="title">导航二</span>
-		  </el-menu-item>
-		  <el-menu-item index="4">
-		    <i class="el-icon-setting"></i>
-		    <span slot="title">导航三</span>
-		  </el-menu-item>
-		  <el-menu-item index="5">
-		    <i class="el-icon-setting"></i>
-		    <span slot="title">导航四</span>
-		  </el-menu-item>
-		  <el-menu-item index="6">
-		    <i class="el-icon-setting"></i>
-		    <span slot="title">导航五</span>
-		  </el-menu-item>
-		  <el-menu-item index="7">
-		    <i class="el-icon-setting"></i>
-		    <span slot="title">导航六</span>
-		  </el-menu-item>
+		  <template v-for="menu in menus">
+		  	<template v-if="menu.submenu">
+		  		<el-submenu :index="menu.index">
+		  			<template slot="title">
+		  				<i :class="menu.icon"></i>
+		  				<span slot="title">{{ menu.title }}</span>
+		  			</template>
+		  			<el-menu-item v-for="(sub,index) in menu.submenu" 
+		  						:key="index" :index="sub.index">
+		  				<i :class="sub.icon"></i>
+		  				<span slot="title">
+		  					{{ sub.title }}
+		  				</span>
+		  			</el-menu-item>
+		  		</el-submenu>
+		  	</template>
+		  	<template v-else>
+		  		<el-menu-item :index="menu.index">
+		  			<i :class="menu.icon"></i>
+		  			<span slot="title">
+		  				{{ menu.title }}
+		  			</span>
+		  		</el-menu-item>
+		  	</template>
+		  </template>
 		</el-menu>
-		<!---->
 </template>
-<style>
+<style scoped lang="scss">
+	@import '../styles/base';
 	a,a:visited {
 		text-decoration: none;
 		outline: none;
 	}
   .el-menu-vertical-demo:not(.el-menu--collapse) {
-    width: 200px;
-    min-height: 400px;
-    /*z-index: 99999;*/
+	    width: 250px;
+	    min-height: 400px;
+	    /*z-index: 99999;*/
+  }
+  .el-submenu,.el-menu--collapse {
+		z-index: 99999;
   }
   .s-aside-menu {
-  	height: 100%;
+  		height: 100%;
   }
   .log {
-	padding:15px;
-	color:#42b983;
-	cursor: pointer;
-	text-align:center;
-	font-weight:bolder;
-	font-size: 24px;
+		padding:15px;
+		color: $primary-color;
+		cursor: pointer;
+		text-align:center;
+		font-weight:bolder;
+		font-size: 24px;
   }
 /*默认滚动条样式*/
 ::-webkit-scrollbar {
@@ -97,7 +88,72 @@
     data() {
       return {
         isCollapse: false,
-        show: true
+        show: true,
+        menus: [
+        	{
+        		icon: 'el-icon-setting',
+        		index: '1',
+        		title: '用户管理',
+        		submenu: [
+        			{
+        				icon: 'el-icon-info',
+        				index: '/user/list',
+        				title: '用户信息'
+        			}
+        		]
+        	},
+        	{
+        		icon: 'el-icon-info',
+        		index: '2',
+        		title: '信息管理',
+        		submenu: [
+        			{
+        				icon: 'el-icon-news',
+        				index: 'newsInfo',
+        				title: '新闻信息'
+        			},
+        			{
+        				icon: 'el-icon-picture',
+        				index: 'newsPicture',
+        				title: '新闻图片'
+        			},
+        			{
+        				icon: 'el-icon-edit-outline',
+        				index: 'addNews',
+        				title: '发布新闻'
+        			}
+        		]
+        	},
+        	{
+        		icon: 'el-icon-service',
+        		index: '3',
+        		title: '服务器管理',
+        		submenu: [
+        			{
+        				icon: 'el-icon-goods',
+        				index: 'serverInfo',
+        				title: '服务器信息'
+        			}
+        		]
+        	},
+        	{
+        		icon: 'el-icon-document',
+        		index: '4',
+        		title: '项目管理',
+        		submenu: [
+        			{
+        				icon: 'el-icon-info',
+        				index: 'projectsInfo',
+        				title: '项目信息'
+        			}
+        		]
+        	},
+        	{
+        		icon: 'el-icon-circle-close-outline',
+        		index: 'logout',
+        		title: '注销'
+        	}
+        ]
       };
     },
     methods: {
