@@ -3,7 +3,7 @@
 	<el-row :gutter="2">
 		<el-col :span="18">
 			<el-row class="s-info-header" align="middle" justify="center">
-				<el-col :span="4" v-for="info in infos" class="s-info">
+				<el-col :span="4" :key="info.number" v-for="info in infos" class="s-info">
 					<span>{{ info.number }}</span>
 					<span>{{ info.title }}</span>
 				</el-col>

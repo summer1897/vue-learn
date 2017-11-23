@@ -7,11 +7,11 @@
 						<!-- <h3>用户信息列表</h3> -->
 						<el-form :inline="true" class="demo-form-inline">
 							<el-form-item>
-    							<el-input  placeholder="姓名"/>
+    							<el-input suffix-icon="el-icon-edit"  placeholder="姓名"/>
   							</el-form-item>
   							<el-form-item>
     							<el-button type="primary" icon="el-icon-search">查询</el-button>
-    							<el-button type="success" icon="el-icon-plus">添加</el-button>
+    							<el-button @click="openUserDialog" type="success" icon="el-icon-plus">添加</el-button>
     							<el-button type="danger" icon="el-icon-delete">删除</el-button>
   							</el-form-item>
   						</el-form>
@@ -20,58 +20,59 @@
 						
 						<el-table ref="multipleTable"
 								  :data="userList"
-								  fit="true"
+								  fit="fit"
 								  tooltip-effect="dark"
 								  max-height="500"
-								  @selection-change="selectionChange" style="border:1px solid #efefef;border-bottom:0px;">
+								  style="border:1px solid #efefef;border-bottom:0px;"
+								  @selection-change="handleSelectionChange">
 							<el-table-column type="selection" 
 											 align="center"
 											 fixed
-											 width="50"/>
+											 width="50" />
 							<el-table-column label="Id"
 											 prop="Id" 
 											 align="center"
-											 sortable="true"
+											 sortable=true
 											 fixed="left"
-											 width="50"/>
+											 width="50" />
 							<el-table-column label="姓名"
 											 prop="name"
 											 align="center"
-											 fixed="left"/>
+											 fixed="left" />
 							<el-table-column label="年龄"
 											 prop="age"
 											 align="center"
-											 sortable="true"/>
+											 sortable=true />
 							<el-table-column label="性别"
 											 prop="sex"
 											 align="center"
 											 :filters="[{text:'男',value:'男'},{text:'女',value:'女'}]"
 											 :filter-method="filterSex"
-											 filter-placement="bottom-end"/>
+											 filter-placement="bottom-end" />
 							<el-table-column label="部门"
 											 prop="department"
-											 show-overflow-tooltip="true"
-											 align="center"/>
+											 show-overflow-tooltip="showOverflowTooltip"
+											 align="center" />
 							<el-table-column label="所属组"
 											 prop="group"
 											 align="center"
 											 :filters="[{text:'开发一组',value:'开发一组'},{text:'开发二组',value:'开发二组'},{text:'开发三组',value:'开发三组'}]"
 											 :filter-method="filterGroup"
-											 filter-placement="bottom-end"/>
+											 filter-placement="bottom-end" />
 							<el-table-column label="邮箱"
 											 prop="email"
-											 show-overflow-tooltip="true"
-											 align="center"/>
+											 show-overflow-tooltip="showOverflowTooltip"
+											 align="center" />
 							<el-table-column label="手机"
 											 prop="phone"
-											 show-overflow-tooltip="true"
+											 show-overflow-tooltip="showOverflowTooltip"
 											 align="center"
-											 sortable="true"/>
+											 sortable=true />
 							<el-table-column label="qq"
 											 prop="qq"
 											 align="center"
-											 sortable="true"
-											 show-overflow-tooltip="true"/>
+											 sortable=true
+											 show-overflow-tooltip="showOverflowTooltip" />
 							<el-table-column label="状态"
 											 prop="status"
 											 align="center"
@@ -93,7 +94,9 @@
 									<el-button type="text" size="small">
           								查看
         							</el-button>
-									<el-button style="color:red;" type="text" size="small">
+									<el-button 
+										style="color:red;" type="text" size="small"
+										@click.native.prevent="removeItem(scope.$index)">
           								移除
         							</el-button>
       							</template>
@@ -112,13 +115,50 @@
 				</el-card>
 			</el-col>
 		</el-row>
+		<add-user ref="addUserDialog" v-on:add="addUser">
+		</add-user>
 	</div>
 </template>
 <script type="text/javascript">
+	import AddUser from './addUser'
+	
 	export default {
+		methods: {
+			filterSex: function (value,row) {
+				return row.sex == value;
+			},
+			filterStatus: function (value,row) {
+				return row.status == value;
+			},
+			filterGroup: function (value,row) {
+				return row.group == value;
+			},
+			openUserDialog: function () {
+				console.log("open dialog");
+				this.$refs.addUserDialog.openAddUserDialog = !this.openAddUserDialog;
+				// this.openAddUserDialog = !this.openAddUserDialog;
+			},
+			addUser: function (user) {
+				console.log("user info: ",user);
+				// var userInfo = JSON.stringify(user);
+				// this.userList.push(JSON.parse(userInfo));
+				this.userList.push(user);
+			},
+			removeItem: function (index) {
+				this.userList.splice(index,1);
+			},
+			handleSelectionChange: function (selections) {
+				this.multipleSelection = selections;
+				console.log("all selected items: ",this.multipleSelection);
+			}
+		},
 		data () {
 			return {
 				currentPage: 1,
+				openAddUserDialog: false,
+				fit: true,
+				showOverflowTooltip: true,
+				multipleSelection: [],
 				userList: [
 					{
 						Id: 1,
@@ -207,17 +247,7 @@
 				]
 			}
 		},
-		methods: {
-			filterSex: function (value,row) {
-				return row.sex == value;
-			},
-			filterStatus: function (value,row) {
-				return row.status == value;
-			},
-			filterGroup: function (value,row) {
-				return row.group == value;
-			}
-		}
+		components: {AddUser}
 	}
 </script>
 <style scoped lang="scss">

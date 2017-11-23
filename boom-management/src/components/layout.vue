@@ -8,7 +8,9 @@
 				<AppHeader/>
 			</el-header>
 			<el-main>
-				<router-view/>
+				<transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutRight">
+					<router-view/>
+				</transition>
 			</el-main>
 		</el-container>
 	</el-container>
@@ -45,5 +47,5 @@
 			flex: 1;
 			z-index: 999;
 		}
-	}
+	} 
 </style>
