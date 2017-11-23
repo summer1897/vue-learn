@@ -3,3 +3,34 @@ $warning-color: #EB9E05;
 $danger-color: #FA5555;
 $info-color: #878D99;
 $general-color: #409EFF;
+
+.bg-primary-color {
+	background-color: $primary-color;
+}
+.bg-warning-color {
+	background-color: $warning-color;
+}
+.bg-danger-color {
+	background-color: $danger-color;
+}
+.bg-info-color {
+	background-color: $info-color;
+}
+.bg-general-color {
+	background-color: $general-color;
+}
+.text-primary-color {
+	color: $primary-color;
+}
+.text-warning-color {
+	color: $warning-color;
+}
+.text-danger-color {
+	color: $danger-color;
+}
+.text-info-color {
+	color: $info-color;
+}
+.text-general-color {
+	color: $general-color;
+}

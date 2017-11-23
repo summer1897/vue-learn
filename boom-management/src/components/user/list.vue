@@ -12,7 +12,7 @@
   							<el-form-item>
     							<el-button type="primary" icon="el-icon-search">查询</el-button>
     							<el-button @click="openUserDialog" type="success" icon="el-icon-plus">添加</el-button>
-    							<el-button type="danger" icon="el-icon-delete">删除</el-button>
+    							<el-button @click="removeSelected" type="danger" icon="el-icon-delete">删除</el-button>
   							</el-form-item>
   						</el-form>
 					</div>
@@ -24,7 +24,8 @@
 								  tooltip-effect="dark"
 								  max-height="500"
 								  style="border:1px solid #efefef;border-bottom:0px;"
-								  @selection-change="handleSelectionChange">
+								  @select="handleSelectionChange"
+								  header-row-class-name="bg-warning-color">
 							<el-table-column type="selection" 
 											 align="center"
 											 fixed
@@ -124,32 +125,50 @@
 	
 	export default {
 		methods: {
+			//性别筛选
 			filterSex: function (value,row) {
 				return row.sex == value;
 			},
+			//状态筛选
 			filterStatus: function (value,row) {
 				return row.status == value;
 			},
+			//所属组筛选
 			filterGroup: function (value,row) {
 				return row.group == value;
 			},
+			//打开模态框
 			openUserDialog: function () {
 				console.log("open dialog");
 				this.$refs.addUserDialog.openAddUserDialog = !this.openAddUserDialog;
 				// this.openAddUserDialog = !this.openAddUserDialog;
 			},
+			//添加用户
 			addUser: function (user) {
 				console.log("user info: ",user);
 				// var userInfo = JSON.stringify(user);
 				// this.userList.push(JSON.parse(userInfo));
 				this.userList.push(user);
 			},
+			//移除单条数据
 			removeItem: function (index) {
 				this.userList.splice(index,1);
 			},
-			handleSelectionChange: function (selections) {
-				this.multipleSelection = selections;
-				console.log("all selected items: ",this.multipleSelection);
+			//将所有选中的用户数据存放到multipleSelection数组中
+			handleSelectionChange: function (selection,row) {
+				console.log("selected row: ",scope.$index);
+				// this.multipleSelection = selections;
+				// console.log("all selected items: ",this.multipleSelection);
+			},
+			//删除所有选中数据
+			removeSelected: function () {
+				// console.log("all removed datas: ",this.multipleSelection[0]);
+				var _length = this.multipleSelection.length;
+				if (_length > 0) {
+					for (var i = 0; i < _length; ++i) {
+						console.log(i + 1,this.multipleSelection[i]);
+					}
+				}
 			}
 		},
 		data () {
