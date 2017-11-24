@@ -1,7 +1,7 @@
 <template>
 	<el-dialog title="添加用户" 
 				:visible.sync="openAddUserDialog" 
-				append-to-body="true">
+				append-to-body>
 		<el-form ref="userForm" :model="userForm" label-width="80px">
 			<el-form-item label="Id">
 				<el-input v-model="userForm.Id" au-complete="off"/>
@@ -63,14 +63,10 @@
 	export default {
 		methods: {
 			addSubmit: function () {
-				// console.log(this.form);
-				this.$emit('add',this.form);
+				// console.log("form user: ",this.userForm);
+				this.$emit('add',this.userForm);
 				this.openAddUserDialog = false;
-				this.$message({
-          			message: '添加成功!',
-          			type: 'success'
-        		});
-        		console.log("form refs: ",this.$refs['userForm'])
+        		// console.log("form refs: ",this.$refs['userForm'])
         		this.$refs['userForm'].resetFields();
 			}
 		},
@@ -87,15 +83,15 @@
 					email: '',
 					phone: '',
 					qq: '',
-					status: ''
+					status: '离线'
 				},
 				sex: [
 					{
-						value: 'male',
+						value: '男',
 						label: '男'
 					},
 					{
-						value: 'female',
+						value: '女',
 						label: '女'
 					}
 				],

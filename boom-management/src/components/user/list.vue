@@ -7,25 +7,37 @@
 						<!-- <h3>用户信息列表</h3> -->
 						<el-form :inline="true" class="demo-form-inline">
 							<el-form-item>
-    							<el-input suffix-icon="el-icon-edit"  placeholder="姓名"/>
+    							<el-input v-model="username" suffix-icon="el-icon-edit"  placeholder="姓名"/>
   							</el-form-item>
   							<el-form-item>
-    							<el-button type="primary" icon="el-icon-search">查询</el-button>
-    							<el-button @click="openUserDialog" type="success" icon="el-icon-plus">添加</el-button>
-    							<el-button @click="removeSelected" type="danger" icon="el-icon-delete">删除</el-button>
+    							<el-button type="primary" 
+    									   icon="el-icon-search"
+    									   @click="queryByName">
+    								查询
+    							</el-button>
+    							<el-button @click="openUserDialog"
+    									   type="success" 
+    									   icon="el-icon-plus">
+    								添加
+    							</el-button>
+    							<el-button @click="removeSelected"
+    									   type="danger"
+    									   icon="el-icon-delete">
+    								删除
+    							</el-button>
   							</el-form-item>
   						</el-form>
 					</div>
 					<div class="s-user-list-content">
 						
 						<el-table ref="multipleTable"
-								  :data="userList"
+								  :data="filterUserInfos"
 								  fit="fit"
 								  tooltip-effect="dark"
 								  max-height="500"
 								  style="border:1px solid #efefef;border-bottom:0px;"
-								  @select="handleSelectionChange"
-								  header-row-class-name="bg-warning-color">
+								  @selection-change="handleSelectionChange"
+						>
 							<el-table-column type="selection" 
 											 align="center"
 											 fixed
@@ -33,7 +45,7 @@
 							<el-table-column label="Id"
 											 prop="Id" 
 											 align="center"
-											 sortable=true
+											 sortable
 											 fixed="left"
 											 width="50" />
 							<el-table-column label="姓名"
@@ -43,7 +55,7 @@
 							<el-table-column label="年龄"
 											 prop="age"
 											 align="center"
-											 sortable=true />
+											 sortable />
 							<el-table-column label="性别"
 											 prop="sex"
 											 align="center"
@@ -52,7 +64,7 @@
 											 filter-placement="bottom-end" />
 							<el-table-column label="部门"
 											 prop="department"
-											 show-overflow-tooltip="showOverflowTooltip"
+											 show-overflow-tooltip
 											 align="center" />
 							<el-table-column label="所属组"
 											 prop="group"
@@ -62,18 +74,18 @@
 											 filter-placement="bottom-end" />
 							<el-table-column label="邮箱"
 											 prop="email"
-											 show-overflow-tooltip="showOverflowTooltip"
+											 show-overflow-tooltip
 											 align="center" />
 							<el-table-column label="手机"
 											 prop="phone"
-											 show-overflow-tooltip="showOverflowTooltip"
+											 show-overflow-tooltip
 											 align="center"
-											 sortable=true />
+											 sortable />
 							<el-table-column label="qq"
 											 prop="qq"
 											 align="center"
-											 sortable=true
-											 show-overflow-tooltip="showOverflowTooltip" />
+											 sortable
+											 show-overflow-tooltip />
 							<el-table-column label="状态"
 											 prop="status"
 											 align="center"
@@ -124,7 +136,23 @@
 	import AddUser from './addUser'
 	
 	export default {
+		computed: {
+			filterUserInfos: function () {
+				var _username = this.queryUserName;
+				return this.userList.filter( data => {
+					if (this.queryUserName == '') {
+						return true;
+					} else {
+						return data.name.indexOf(_username) >= 0;
+					}
+				});
+			}
+		},
 		methods: {
+			//根据用户名查找用户
+			queryByName: function () {
+				this.queryUserName = this.username;
+			},
 			//性别筛选
 			filterSex: function (value,row) {
 				return row.sex == value;
@@ -139,35 +167,80 @@
 			},
 			//打开模态框
 			openUserDialog: function () {
-				console.log("open dialog");
+				// console.log("open dialog");
 				this.$refs.addUserDialog.openAddUserDialog = !this.openAddUserDialog;
 				// this.openAddUserDialog = !this.openAddUserDialog;
 			},
 			//添加用户
 			addUser: function (user) {
 				console.log("user info: ",user);
-				// var userInfo = JSON.stringify(user);
-				// this.userList.push(JSON.parse(userInfo));
-				this.userList.push(user);
+				var userInfo = JSON.stringify(user);
+				// console.log("user json: ",JSON.parse(userInfo));
+				this.userList.push(JSON.parse(userInfo));
+				// this.userList.push(userInfo);
+				this.$message({
+          			message: '添加成功!',
+          			type: 'success'
+        		});
+        		// this.$refs.addUserDialog.refs['userForm'].resetFields();
 			},
 			//移除单条数据
 			removeItem: function (index) {
-				this.userList.splice(index,1);
+				this.$confirm('此操作将永久删除该数据，是否继续?','提示',{
+					confirmButtonText: '确定',
+					cancelButtonText: '取消',
+					type: 'warning'
+				}).then(() => {
+					//确定删除数据回调函数
+					this.userList.splice(index,1);
+					this.$message({
+						type: 'success',
+						message: '删除成功!'
+					});
+				}).catch(() => {
+					//取消操作回调函数
+					this.$message({
+						type: 'info',
+						message: '取消操作'
+					});
+				});
 			},
 			//将所有选中的用户数据存放到multipleSelection数组中
-			handleSelectionChange: function (selection,row) {
-				console.log("selected row: ",scope.$index);
-				// this.multipleSelection = selections;
+			handleSelectionChange: function (selection) {
+				this.multipleSelection = selection;
 				// console.log("all selected items: ",this.multipleSelection);
 			},
 			//删除所有选中数据
 			removeSelected: function () {
-				// console.log("all removed datas: ",this.multipleSelection[0]);
+				//确定删除数据回调函数
 				var _length = this.multipleSelection.length;
 				if (_length > 0) {
-					for (var i = 0; i < _length; ++i) {
-						console.log(i + 1,this.multipleSelection[i]);
-					}
+					this.$confirm('此操作将永久删除你选择的所有数据，是否继续?',
+								  '提示',
+								  {
+									confirmButtonText: '确定',
+									cancelButtonText: '取消',
+									type: 'warning'
+					}).then(() => {
+						for (var i = 0; i < _length; ++i) {
+							var _data = this.multipleSelection[i];
+							console.log("index: ",this.userList.indexOf(_data));
+							this.userList.splice(this.userList.indexOf(_data),1);
+						}
+						this.multipleSelection = [];
+						this.$message({
+							type: 'success',
+							message: '删除成功!'
+						});
+					}).catch(() => {
+						//取消操作回调函数
+						this.$message({
+							type: 'info',
+							message: '取消操作'
+						});
+					});
+				} else {
+					this.$message.warning('请选中待删除的数据!');
 				}
 			}
 		},
@@ -175,9 +248,9 @@
 			return {
 				currentPage: 1,
 				openAddUserDialog: false,
-				fit: true,
-				showOverflowTooltip: true,
 				multipleSelection: [],
+				username: '',
+				queryUserName: '',
 				userList: [
 					{
 						Id: 1,
@@ -275,7 +348,7 @@
 		color: $primary-color;
 	}
 	.s-outline {
-		color: $warning-color;
+		color: $info-color;
 	}
 	.s-pager {
 		margin: 10px 0px 0px 0px;
