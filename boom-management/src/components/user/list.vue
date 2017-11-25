@@ -108,9 +108,9 @@
           								查看
         							</el-button>
 									<el-button 
-										style="color:red;" type="text" size="small"
-										@click.native.prevent="removeItem(scope.$index)">
-          								移除
+										style="color:#EB9E05;" type="text" size="small"
+										@click="openEditDialog=true">
+          								编辑
         							</el-button>
       							</template>
 							</el-table-column>
@@ -128,12 +128,14 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		<add-user ref="addUserDialog" v-on:add="addUser">
-		</add-user>
+		<!-- <add-user ref="addUserDialog" v-on:add="addUser">
+		</add-user> -->
+		<edit-user :msg="openEditDialog"></edit-user>
 	</div>
 </template>
 <script type="text/javascript">
 	import AddUser from './addUser'
+	import EditUser from './editUser'
 	
 	export default {
 		computed: {
@@ -248,6 +250,8 @@
 			return {
 				currentPage: 1,
 				openAddUserDialog: false,
+				//是否打开编辑模态框
+				openEditDialog: false,
 				multipleSelection: [],
 				username: '',
 				queryUserName: '',
@@ -339,7 +343,9 @@
 				]
 			}
 		},
-		components: {AddUser}
+		components: {
+			'edit-user':EditUser
+		}
 	}
 </script>
 <style scoped lang="scss">
