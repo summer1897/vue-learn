@@ -12,18 +12,15 @@
   							<el-form-item>
     							<el-button type="primary" 
     									   icon="el-icon-search"
-    									   @click="queryByName">
-    								查询
+    									   @click="queryByName">查询
     							</el-button>
     							<el-button @click="openUserDialog"
     									   type="success" 
-    									   icon="el-icon-plus">
-    								添加
+    									   icon="el-icon-plus">添加
     							</el-button>
     							<el-button @click="removeSelected"
     									   type="danger"
-    									   icon="el-icon-delete">
-    								删除
+    									   icon="el-icon-delete">删除
     							</el-button>
   							</el-form-item>
   						</el-form>
@@ -104,14 +101,17 @@
 											 fixed="right"
 											 width="100">
 								<template slot-scope="scope">
-									<el-button type="text" size="small">
-          								查看
-        							</el-button>
-									<el-button 
-										style="color:red;" type="text" size="small"
-										@click.native.prevent="removeItem(scope.$index)">
-          								移除
-        							</el-button>
+									<el-tooltip content="查看" placement="top">
+										<el-button type="text" icon="el-icon-search">
+        								</el-button>
+									</el-tooltip>
+									<el-tooltip content="编辑" placement="right">
+										<el-button
+											type="text"
+											icon="el-icon-edit"
+											@click.native.prevent="removeItem(scope.$index)">
+        								</el-button>
+									</el-tooltip>
       							</template>
 							</el-table-column>
 						</el-table>
