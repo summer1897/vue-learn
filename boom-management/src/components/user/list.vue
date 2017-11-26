@@ -101,17 +101,14 @@
 											 fixed="right"
 											 width="100">
 								<template slot-scope="scope">
-									<el-tooltip content="查看" placement="top">
-										<el-button type="text" icon="el-icon-search">
-        								</el-button>
-									</el-tooltip>
-									<el-tooltip content="编辑" placement="right">
-										<el-button
-											type="text"
-											icon="el-icon-edit"
-											@click.native.prevent="removeItem(scope.$index)">
-        								</el-button>
-									</el-tooltip>
+									<el-button type="text" size="small">
+          								查看
+        							</el-button>
+									<el-button 
+										style="color:#EB9E05;" type="text" size="small"
+										@click="openEditDialog=true">
+          								编辑
+        							</el-button>
       							</template>
 							</el-table-column>
 						</el-table>
@@ -128,12 +125,14 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		<add-user ref="addUserDialog" v-on:add="addUser">
-		</add-user>
+		<!-- <add-user ref="addUserDialog" v-on:add="addUser">
+		</add-user> -->
+		<edit-user :msg="openEditDialog"></edit-user>
 	</div>
 </template>
 <script type="text/javascript">
 	import AddUser from './addUser'
+	import EditUser from './editUser'
 	
 	export default {
 		computed: {
@@ -248,6 +247,8 @@
 			return {
 				currentPage: 1,
 				openAddUserDialog: false,
+				//是否打开编辑模态框
+				openEditDialog: false,
 				multipleSelection: [],
 				username: '',
 				queryUserName: '',
@@ -339,7 +340,9 @@
 				]
 			}
 		},
-		components: {AddUser}
+		components: {
+			'edit-user':EditUser
+		}
 	}
 </script>
 <style scoped lang="scss">
