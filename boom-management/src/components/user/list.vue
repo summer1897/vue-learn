@@ -106,7 +106,7 @@
         							</el-button>
 									<el-button 
 										style="color:#EB9E05;" type="text" size="small"
-										@click="openEditDialog=true">
+										@click="openEdit(scope.$index)">
           								编辑
         							</el-button>
       							</template>
@@ -125,9 +125,9 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		<!-- <add-user ref="addUserDialog" v-on:add="addUser">
-		</add-user> -->
-		<edit-user :msg="openEditDialog"></edit-user>
+		<add-user ref="addUserDialog" v-on:add="addUser">
+		</add-user>
+		<edit-user ref="editdialogRef" :msg="userInfo"></edit-user>
 	</div>
 </template>
 <script type="text/javascript">
@@ -169,6 +169,11 @@
 				// console.log("open dialog");
 				this.$refs.addUserDialog.openAddUserDialog = !this.openAddUserDialog;
 				// this.openAddUserDialog = !this.openAddUserDialog;
+			},
+			openEdit: function (index) {
+				console.log("index: ",index);
+				this.userInfo = this.userList[index];
+				this.$refs.editdialogRef.openEditUserDialog = true;
 			},
 			//添加用户
 			addUser: function (user) {
@@ -252,6 +257,7 @@
 				multipleSelection: [],
 				username: '',
 				queryUserName: '',
+				userInfo: {},
 				userList: [
 					{
 						Id: 1,
@@ -341,6 +347,7 @@
 			}
 		},
 		components: {
+			'add-user': AddUser,
 			'edit-user':EditUser
 		}
 	}
