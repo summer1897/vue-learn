@@ -12,18 +12,15 @@
   							<el-form-item>
     							<el-button type="primary" 
     									   icon="el-icon-search"
-    									   @click="queryByName">
-    								查询
+    									   @click="queryByName">查询
     							</el-button>
     							<el-button @click="openUserDialog"
     									   type="success" 
-    									   icon="el-icon-plus">
-    								添加
+    									   icon="el-icon-plus">添加
     							</el-button>
     							<el-button @click="removeSelected"
     									   type="danger"
-    									   icon="el-icon-delete">
-    								删除
+    									   icon="el-icon-delete">删除
     							</el-button>
   							</el-form-item>
   						</el-form>
@@ -109,7 +106,7 @@
         							</el-button>
 									<el-button 
 										style="color:#EB9E05;" type="text" size="small"
-										@click="openEditDialog=true">
+										@click="openEdit(scope.$index)">
           								编辑
         							</el-button>
       							</template>
@@ -130,7 +127,8 @@
 		</el-row>
 		<add-user ref="addUserDialog" v-on:add="addUser">
 		</add-user>
-		<edit-user :msg="openEditDialog"></edit-user>
+		<!-- <edit-user :msg="openEditDialog"></edit-user> -->
+		<edit-user ref="editdialogRef" :msg="userInfo"></edit-user>
 	</div>
 </template>
 <script type="text/javascript">
@@ -172,6 +170,11 @@
 				// console.log("open dialog");
 				this.$refs.addUserDialog.openAddUserDialog = !this.openAddUserDialog;
 				// this.openAddUserDialog = !this.openAddUserDialog;
+			},
+			openEdit: function (index) {
+				console.log("index: ",index);
+				this.userInfo = this.userList[index];
+				this.$refs.editdialogRef.openEditUserDialog = true;
 			},
 			//添加用户
 			addUser: function (user) {
@@ -255,6 +258,7 @@
 				multipleSelection: [],
 				username: '',
 				queryUserName: '',
+				userInfo: {},
 				userList: [
 					{
 						Id: 1,
