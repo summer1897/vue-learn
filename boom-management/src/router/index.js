@@ -7,10 +7,11 @@ import UserList from '@/components/user/list'
 Vue.use(Router)
 
 export default new Router({
+  // mode: 'history',
   routes: [
     {
       path: '/',
-      // name: 'Layout',
+      name: 'Layout',
       component: Layout,
       children: [
       	{
@@ -19,8 +20,8 @@ export default new Router({
   	  		component: Home
   		  },
         {
-          path: '/user/list',
           name: 'UserList',
+          path: '/user/list',
           component: UserList
         }
       ]

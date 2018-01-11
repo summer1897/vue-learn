@@ -8,7 +8,7 @@
 				<AppHeader/>
 			</el-header>
 			<el-main>
-				<transition enter-active-class="animated bounceInLeft" leave-active-class="animated bounceOutRight">
+				<transition enter-active-class="animated zoomIn" leave-active-class="animated zoomOut">
 					<router-view/>
 				</transition>
 			</el-main>

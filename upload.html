@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>upload</title>
+</head>
+<body>
+	<center>
+		<form action="http://localhost:9000/shuicheng/notification/publish.json" method="post" enctype="multipart/form-data">
+			id:<input type="number" name="id"><br/>
+		 	title:<input type="text" name="title"><br/>
+		 	content:<input type="textarea" name="content"><br/>
+		 	publisherCompanyId:<input type="number" name="publisherCompanyId"><br/>
+		 	level:<input type="number" name="level"><br/>
+		 	readed:<input type="text" name="readed"><br/>
+		 	publishDate:<input type="date" name="publishDate"><br/>
+		 	expiration:<input type="text" name="expiration"><br/>
+		 	<input type="submit" value="upload"/>
+		</form>
+	</center>
+</body>
+</html>

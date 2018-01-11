@@ -50,8 +50,7 @@
 			</el-form-item>
 		</el-form>
 		<div slot="footer" class="dialog-footer">
-			<el-button type="primary" icon="el-icon-plus" @click="addSubmit">
-				添加
+			<el-button type="primary" icon="el-icon-plus" @click="addSubmit">添加
 			</el-button>
     		<el-button type="warning" @click="openAddUserDialog = false" icon="el-icon-close">取消</el-button>
 		</div>

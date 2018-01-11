@@ -3,7 +3,7 @@
 		<el-dialog :visible.sync="openEditUserDialog"
 				   title="编辑"
 				   append-to-body>
-			<div class="dialog-foot" slot="foot">
+			<div class="dialog-foot" slot="footer">
 				<el-button type="primary" icon="el-icon-plus" @click="editSubmit">
 					确定
 				</el-button>
@@ -20,17 +20,13 @@
 		props: ['msg'],
 		methods: {
 			editSubmit: function() {
-
-			}
-		},
-		computed: {
-			openEditUserDialog: function () {
-				return msg;
+				console.log("router parameters: ",this.$route.params);
+				console.log("msg: ",this.msg);
 			}
 		},
 		data () {
 			return {
-				x: ''
+				openEditUserDialog: this.msg
 			}
 		}
 	}

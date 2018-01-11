@@ -1,40 +1,81 @@
-require('./check-versions')()
+const fs = require('fs')
+const path = require('path')
+const zlib = require('zlib')
+const uglify = require('uglify-js')
+const rollup = require('rollup')
+const configs = require('./configs')
 
-process.env.NODE_ENV = 'production'
+if (!fs.existsSync('dist')) {
+  fs.mkdirSync('dist')
+}
 
-var ora = require('ora')
-var rm = require('rimraf')
-var path = require('path')
-var chalk = require('chalk')
-var webpack = require('webpack')
-var config = require('../config')
-var webpackConfig = require('./webpack.prod.conf')
+build(Object.keys(configs).map(key => configs[key]))
 
-var spinner = ora('building for production...')
-spinner.start()
+function build (builds) {
+  let built = 0
+  const total = builds.length
+  const next = () => {
+    buildEntry(builds[built]).then(() => {
+      built++
+      if (built < total) {
+        next()
+      }
+    }).catch(logError)
+  }
 
-rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
-  if (err) throw err
-  webpack(webpackConfig, function (err, stats) {
-    spinner.stop()
-    if (err) throw err
-    process.stdout.write(stats.toString({
-      colors: true,
-      modules: false,
-      children: false,
-      chunks: false,
-      chunkModules: false
-    }) + '\n\n')
+  next()
+}
 
-    if (stats.hasErrors()) {
-      console.log(chalk.red('  Build failed with errors.\n'))
-      process.exit(1)
+function buildEntry ({ input, output }) {
+  const isProd = /min\.js$/.test(output.file)
+  return rollup.rollup(input)
+    .then(bundle => bundle.generate(output))
+    .then(({ code }) => {
+      if (isProd) {
+        var minified = uglify.minify(code, {
+          output: {
+            preamble: output.banner,
+            /* eslint-disable camelcase */
+            ascii_only: true
+            /* eslint-enable camelcase */
+          }
+        }).code
+        return write(output.file, minified, true)
+      } else {
+        return write(output.file, code)
+      }
+    })
+}
+
+function write (dest, code, zip) {
+  return new Promise((resolve, reject) => {
+    function report (extra) {
+      console.log(blue(path.relative(process.cwd(), dest)) + ' ' + getSize(code) + (extra || ''))
+      resolve()
     }
 
-    console.log(chalk.cyan('  Build complete.\n'))
-    console.log(chalk.yellow(
-      '  Tip: built files are meant to be served over an HTTP server.\n' +
-      '  Opening index.html over file:// won\'t work.\n'
-    ))
+    fs.writeFile(dest, code, err => {
+      if (err) return reject(err)
+      if (zip) {
+        zlib.gzip(code, (err, zipped) => {
+          if (err) return reject(err)
+          report(' (gzipped: ' + getSize(zipped) + ')')
+        })
+      } else {
+        report()
+      }
+    })
   })
-})
+}
+
+function getSize (code) {
+  return (code.length / 1024).toFixed(2) + 'kb'
+}
+
+function logError (e) {
+  console.log(e)
+}
+
+function blue (str) {
+  return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
+}

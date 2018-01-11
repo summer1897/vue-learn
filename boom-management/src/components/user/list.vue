@@ -128,8 +128,8 @@
 				</el-card>
 			</el-col>
 		</el-row>
-		<!-- <add-user ref="addUserDialog" v-on:add="addUser">
-		</add-user> -->
+		<add-user ref="addUserDialog" v-on:add="addUser">
+		</add-user>
 		<edit-user :msg="openEditDialog"></edit-user>
 	</div>
 </template>
@@ -344,7 +344,8 @@
 			}
 		},
 		components: {
-			'edit-user':EditUser
+			'add-user': AddUser,
+			'edit-user': EditUser
 		}
 	}
 </script>
