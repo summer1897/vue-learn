@@ -4,45 +4,41 @@
 			<el-submenu index="1">
 				<template slot="title">
 					<i class="el-icon-location"></i>
-					<span slot="title">导航一</span>
+					<span slot="title">权限管理</span>
 				</template>
-				<el-menu-item-group>
-					<span slot="title">分组一</span>
-					<el-menu-item index="1-1">选项1</el-menu-item>
-					<el-menu-item index="1-2">选项2</el-menu-item>
-				</el-menu-item-group>
-				<el-menu-item-group title="分组2">
-					<el-menu-item index="1-3">选项3</el-menu-item>
-				</el-menu-item-group>
-				<el-submenu index="1-4">
-					<span slot="title">选项4</span>
-					<el-menu-item index="1-4-1">选项1</el-menu-item>
-				</el-submenu>
+				<el-menu-item index="/user/list" route="/user/list">用户管理</el-menu-item>
+				<el-menu-item index="1-2" route="/role/list">角色管理</el-menu-item>
+				<el-menu-item index="1-3" route="/permission/list">权限管理</el-menu-item>
 			</el-submenu>
-			<el-menu-item index="2">
-				<i class="el-icon-menu"></i>
-				<span slot="title">导航二</span>
-			</el-menu-item>
-			<el-menu-item index="3">
-				<i class="el-icon-setting"></i>
-				<span slot="title">导航三</span>
-			</el-menu-item>
-			<el-menu-item index="3">
-				<i class="el-icon-setting"></i>
-				<span slot="title">导航三</span>
-			</el-menu-item>
-			<el-menu-item index="3">
-				<i class="el-icon-setting"></i>
-				<span slot="title">导航三</span>
-			</el-menu-item>
-			<el-menu-item index="3">
-				<i class="el-icon-setting"></i>
-				<span slot="title">导航三</span>
-			</el-menu-item>
-			<el-menu-item index="3">
-				<i class="el-icon-setting"></i>
-				<span slot="title">导航三</span>
-			</el-menu-item>
+			<el-submenu index="2">
+				<template slot="title">
+					<i class="el-icon-menu"></i>
+					<span slot="title">代码管理</span>
+				</template>
+				<el-menu-item index="2-1">代码生成</el-menu-item>
+			</el-submenu>
+			<el-submenu index="3">
+				<template slot="title">
+					<i class="el-icon-loading"></i>
+					<span slot="title">测试管理</span>
+				</template>
+				<el-menu-item index="3-1">系统测试</el-menu-item>
+			</el-submenu>
+			<el-submenu index="4">
+				<template slot="title">
+					<i class="el-icon-document"></i>
+					<span slot="title">日志管理</span>
+				</template>
+				<el-menu-item index="4-1">系统日志</el-menu-item>
+			</el-submenu>
+			<el-submenu index="5">
+				<template slot="title">
+					<i class="el-icon-setting"></i>
+					<span slot="title">设置</span>
+				</template>
+				<el-menu-item index="5-1">用户信息</el-menu-item>
+				<el-menu-item index="5-2">密码修改</el-menu-item>
+			</el-submenu>
 		</el-menu>
 	</div>
 </template>

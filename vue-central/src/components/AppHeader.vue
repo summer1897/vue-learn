@@ -1,6 +1,6 @@
 <template>
-	<div id="component-header" style="position: fixed;width:100%;">
-		<el-menu :default-active="activeIndex" class="el-menu-demo" mode="horizontal" @select="handleSelect">
+	<div id="component-header">
+		<el-menu mode="horizontal">
 			<el-menu-item index="1">处理中心</el-menu-item>
 			<el-submenu index="2">
 				<template slot="title">我的工作台</template>

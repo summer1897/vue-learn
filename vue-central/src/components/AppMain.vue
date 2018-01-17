@@ -2,6 +2,9 @@
 	<div id="component-main">
 		<app-header/>
 		<app-content/>
+		<transition enter-active-class="animated zoomIn" leave-active-class="animated zoomOut">
+			<router-view/>
+		</transition>
 	</div>
 </template>
 <script type="text/javascript">

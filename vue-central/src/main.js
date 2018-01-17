@@ -7,6 +7,7 @@ import Vuex from 'vuex'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import './assets/css/base.css'
+import 'animate.css'
 
 Vue.config.productionTip = false
 Vue.use(Vuex)
