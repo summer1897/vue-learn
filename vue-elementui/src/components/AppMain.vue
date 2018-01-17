@@ -76,6 +76,8 @@
 		    tooltip-effect="dark"
 		    style="width:100%"
 		    :fit="fit"
+		    @cell-mouse-enter="showOperation"
+		    @cell-mouse-leave="hideOperation"
 		    @selection-change="handleSelectionChange">
 		    <el-table-column
 		      type="selection"
@@ -84,13 +86,15 @@
 		    <el-table-column
 		      label="文件名"
 		      prop="fileName"
-		      show-overflow-tooltip>
+		      show-overflow-tooltip
+		      >
 		      <template slot-scope="scope">
 		      		<el-row>
 		      			<el-col :span="6">
 		      				{{scope.row.fileName}}
 		      			</el-col>
-		      			<el-col :offset="12" :span="6">
+		      			<el-col :offset="12" :span="6" 
+		      			v-bind:class="{ 's-column-hide' : operation }">
 		      				<i class="el-icon-share"></i>
 							<i class="el-icon-download"></i>
 							<el-dropdown>
@@ -123,8 +127,20 @@
 </div>
 </template>
 <script>
+	// import {fileList} from '../db/db'
+	import axios from 'axios'
+
+	axios.defaults.baseURL = 'http://localhost:9000/boom'; 
 	export default {
 		name: 'component-main',
+		mounted() {
+			axios.get('/file/lists.json/1')
+			 .then(response => {
+			 	console.log(response);
+			 }).catch(err => {
+			 	console.log('request file list fail');
+			 });
+		},
 		data () {
 			return {
 				fileAmount: 2,
@@ -155,7 +171,8 @@
 				}],
 				multipleSelection: [],
 				fit: true,
-				searchContent: ''
+				searchContent: '',
+				operation: true
 			}
 		},
 		methods: {
@@ -170,7 +187,17 @@
 			},
 			handleSelectionChange(val) {
 				this.multipleSelection = val;
+			},
+			showOperation(row, column, cell, event) {
+				// alert("show");
+				// console.log(event);
+				this.operation = !this.operation;
+			},
+			hideOperation() {
+				// alert('hidden');
+				this.operation = !this.operation;
 			}
+
 		}
 	}
 </script>
@@ -186,5 +213,8 @@
 	.s-drop {
 		font-family: "微软雅黑";
 		font-size: 12px;
+	}
+	.s-column-hide {
+		visibility: hidden;
 	}
 </style>
