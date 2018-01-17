@@ -7,64 +7,24 @@
         {{item.label}}
       </li>
     </ul>
-    <ul>
-      <li v-for="firstRes in resources">
-        {{firstRes.name}}
-        <ul>
-          <li v-for="secondRes in firstRes.subResources">
-            {{secondRes.name}}
-          </li>
-        </ul>
-      </li>
-    </ul>
   </div>
 </template>
 
 <script>
 
-import Store from './Store'
-// import ResourceDao from './dao/ResourceDao'
-import Axios from 'axios'
-
 export default {
   data () {
     return {
         title : 'this is a todo list',
-        items : Store.fetch(),
-        resources : '',
+        items : [],
         newItem : ''
     };
-  },
-  created () {
-    // console.log('create vue object...');
-    console.log('resources',this.resources);
-    // ResourceDao.fetch('http://localhost:9000/boom/authority/resourceList.html',this);
-    Axios.get('http://localhost:9000/boom/authority/resourceList.html')
-        .then(function (response) {
-          console.log(response.data);
-          // _data = response.data;
-          this.resources = response.data;
-          // return JSON.stringify(response);
-        }.bind(this)).catch(function (error){
-          console.log('error');
-          console.log(error);
-        });
-  },
-  watch : {
-    items : {
-      handler : function (datas) {
-        Store.save(datas)
-      },
-      deep : true
-    }
   },
   methods : {
       toggleStatus : function(item) {
           item.isFinished = !item.isFinished
       },
       addItem : function() {
-        //console.log('itens: '+this.items);
-        //console.log('resources: '+this.resources);
         this.items.push({
           label : this.newItem,
           isFinished : false

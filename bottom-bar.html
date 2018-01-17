@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Fixed Bottom Bar</title>
+	<style type="text/css">
+		html,body{
+			padding: 0px;
+			margin: 0px;
+			height: 100%;
+		}
+		body {
+			display: flex;
+			flex-direction: column;
+		}
+
+		#content {
+			flex: 1 0 0;
+		}
+		#footer {
+			/*position: fixed;
+			bottom: 0;*/
+			flex: 0 0 auto;
+			width: 100%;
+			line-height: 80px;
+			text-align: center;
+			/*background-color: #232c32;
+			color: #7d94a4;*/
+		}
+		#footer .modal-over {
+			position: relative;
+			/*top: 0;*/
+			bottom: -80px;
+			left: 0;
+			height: 80px;
+			background-color: #232c32;
+			opacity: 0.7;
+			width: 100%;
+			/*border: 1px solid #ff0000;*/
+			z-index: 999;
+		}
+		#footer .footer-body {
+			position: relative;
+			height: 80px;
+			bottom: 0;
+			left: 0;
+			width: 100%;
+			z-index: 9999;
+			color: white;
+			/*border: 1px solid green;*/
+			line-height: 80px;
+		}
+		.footer-body .body-left {
+			position: absolute;
+			left: 0px;
+			display: inline-block;
+			width: 20%;
+			/*border: 1px solid red;*/
+			padding: 10px;
+			background-color: #232c32;
+			/*margin: auto;*/
+			/*text-align: center;*/
+		}
+		.body-left div {
+			/*border: 1px solid yellow;*/
+			/*text-align: center;*/
+		}
+		.footer-body .body-central {
+			display: inline-block;
+			/*border: 1px solid yellow;*/
+			width: 60%;
+			background-color: #5a6a7a;
+		}
+		.footer-body .body-right {
+			position: absolute;
+			right: 0px;
+			display: inline-block;
+			width: 20%;
+			/*border: 1px solid green;*/
+		}
+	</style>
+</head>
+<body>
+	<div id="content">
+		<div class="item1">Music1</div>
+		<div class="item2">Music2</div>
+		<div class="item3">Music3</div>
+		<div class="item4">Music4</div>
+		<div class="item5">Music5</div>
+		<div class="item6">Music6</div>
+		<div class="item7">Music7</div>
+		<div class="item8">Music8</div>
+		<div class="item9">Music9</div>
+		<div class="item10">Music10</div>
+		<div class="item11">Music11</div>
+		<div class="item12">Music12</div>
+		<div class="item13">Music13</div>
+		<div class="item14">Music14</div>
+		<div class="item15">Music15</div>
+		<div class="item16">Music16</div>
+		<div class="item17">Music17</div>
+		<div class="item18">Music18</div>
+		<div class="item19">Music19</div>
+		<div class="item20">Music20</div>
+		<div class="item21">Music21</div>
+		<div class="item22">Music22</div>
+		<div class="item23">Music23</div>
+		<div class="item24">Music24</div>
+		<div class="item25">Music25</div>
+		<div class="item26">Music26</div>
+		<div class="item27">Music27</div>
+		<div class="item28">Music28</div>
+		<div class="item29">Music29</div>
+		<div class="item30">Music30</div>
+	</div>
+	<div id="footer">
+		<div class="modal-over"></div>
+		<div class="footer-body">
+			<div class="body-left">
+				<div style="width: 60px;height: 60px;background-color: #f7f7f7;border-radius:100%;"></div>
+			</div>
+			<div class="body-central">
+				Bottom Music Bar
+			</div>
+			<div class="body-right">
+				Right Part
+			</div>
+		</div>
+	</div>
+</body>
+</html>

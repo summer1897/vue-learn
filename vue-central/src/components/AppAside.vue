@@ -1,6 +1,13 @@
 <template>
 	<div id="component-aside" class="all-height">
-		<el-menu default-active="1-4-1" class="el-menu-vertical-demo all-height" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
+		<el-menu 
+			default-active="1-4-1" 
+			class="el-menu-vertical-demo all-height" 
+			@open="handleOpen" 
+			@close="handleClose" 
+			:collapse="isCollapse"
+			:router="true"
+			>
 			<el-submenu index="1">
 				<template slot="title">
 					<i class="el-icon-location"></i>
