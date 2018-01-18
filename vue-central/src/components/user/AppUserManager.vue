@@ -17,10 +17,18 @@
 					>
 						搜索
 					</el-button>
-					<el-button type="success" icon="el-icon-plus">
+					<el-button 
+						type="success"
+						icon="el-icon-plus"
+						@click="addUserDialog=true"
+					>
 						添加
 					</el-button>
-	  				<el-button type="primary" icon="el-icon-edit">
+	  				<el-button 
+	  					type="primary"
+	  					icon="el-icon-edit"
+						@click="editUserDialog =true"
+	  				>
 	  					编辑
 	  				</el-button>
 	  				<el-button 
@@ -56,9 +64,10 @@
 					width="55">
 				</el-table-column>
 				<el-table-column
-					label="ID"
 					:align="align"
-					prop="id">
+					label="序号"
+					type="index"
+				>
 				</el-table-column>
 				<el-table-column
 					label="用户名"
@@ -134,14 +143,21 @@
 
 		<!-- 信息模态框 -->
 		<el-dialog title="添加用户" 
-			:visible.sync="dialogFormVisible"
+			:visible.sync="addUserDialog"
 			>
 			<el-form :model="userInfo" ref="userInfoForm" label-width="80px">
 				<el-form-item label="用户名" prop="userName">
-					<el-input v-model="userInfo.userName"></el-input>
+					<el-input v-model="userInfo.userName" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="昵称" prop="nickName">
-					<el-input v-model="userInfo.nickName"></el-input>
+					<el-input v-model="userInfo.nickName" clearable></el-input>
+				</el-form-item>
+				<el-form-item label="密码" prop="password">
+					<el-input 
+						type="password" 
+						v-model="userInfo.password" 
+						clearable
+					/>
 				</el-form-item>
 				<el-form-item label="性别" prop="sex">
 					<el-select v-model="userInfo.sex" placeholder="请选性别">
@@ -150,17 +166,20 @@
 					</el-select>
 				</el-form-item>
 				<el-form-item label="手机号码" prop="phone">
-					<el-input v-model="userInfo.phone"></el-input>
+					<el-input 
+						v-model="userInfo.phone" 
+						clearable
+					/>
 				</el-form-item>
 				<el-form-item label="邮箱" prop="email">
-					<el-input v-model="userInfo.email"></el-input>
+					<el-input v-model="userInfo.email" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="出生日期" prop="birthday">
 					<el-date-picker type="date" placeholder="选择日期" v-model="userInfo.birthday" style="width: 100%;"></el-date-picker>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
-				<el-button @click="dialogFormVisible = false">取 消</el-button>
+				<el-button @click="addUserDialog = false">取 消</el-button>
 				<el-button type="primary" @click="addUserSubmit">确 定</el-button>
 			</div>
 		</el-dialog>
@@ -169,6 +188,7 @@
 </template>
 <script type="text/javascript">
 	import {userDao} from '@/db/user'
+	import {utils} from '@/utils/utils'
 	export default {
 		name: 'component-user-manager',
 		mounted () {
@@ -181,12 +201,14 @@
 				userLists: [],
 				align: 'center',
 				userSearch: '',
-				dialogFormVisible: false,
+				addUserDialog: false,
+				editUserDialog: false,
 				formLabelWidth: '120px',
 				userInfo: {
 					userName: '',
 					nickName: '',
-					sex: '男',
+					password: '',
+					sex: '',
 					phone: '',
 					email: '',
 					birthday: ''
@@ -249,15 +271,33 @@
 					});
 				}
 			},
-			addUser () {
-
-			},
 			addUserSubmit () {
+				/*
+				* 添加用户信息提交
+				*/
 				// this.$refs.userInfoForm.resetFields();
-				this.$nextTick(function() {
-		          this.$refs.userInfoForm.resetFields();
-		        });
-				this.dialogFormVisible = !this.dialogFormVisible;
+				console.log("user info",JSON.stringify(this.userInfo));
+				var _userInfo = this.userInfo;
+				//格式化时间字符串
+				utils.dateFormat(this.userInfo.birthday);
+				userDao.addUser("/user/add.json",JSON.stringify(this.userInfo))
+					.then(res => {
+						if (1 == res.code) {
+							this.$message({
+			          			message: res.msg,
+			          			type: 'success'
+        					});
+        					this.userLists.push(_userInfo);
+        					this.$refs.userInfoForm.resetFields();
+						} else {
+							this.$message.error(res.msg);
+						}
+						// console.log(res);
+					}).catch(err => {
+						console.log("error: ",err);
+					});
+				this.$refs.multipleTable.doLayout();
+				this.addUserDialog = !this.addUserDialog;
 			},
 			editUser () {
 
@@ -306,7 +346,7 @@
 				}
 			},
 			addRoles () {
-				this.dialogFormVisible = !this.dialogFormVisible;
+				// this.dialogFormVisible = !this.dialogFormVisible;
 			},
 		}
 	}

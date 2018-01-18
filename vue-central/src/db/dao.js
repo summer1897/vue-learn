@@ -10,17 +10,19 @@ export const fetchGet = function(url,params) {
 			 }).catch(err => {
 			 	reject(err);
 			 });
-	})
+	});
 }
 
 export const fetchPost = function(url,params) {
 	return new Promise((resolve,reject) => {
-		axios.post(url,params)
+		var _headers = {headers: {"Content-Type": "application/json"}};
+		axios.post(url,params,_headers)
 			 .then(response => {
+			 	// console.log("fetchPost:",response.data);
 			 	resolve(response.data);
 			 }).catch(err => {
 			 	reject(err);
 			 });
-	})
+	});
 }
 

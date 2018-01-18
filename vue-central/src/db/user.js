@@ -16,5 +16,10 @@ export const userDao = {
 		return fetchGet(url,params).then(res => {
 			return res.data;
 		});
+	},
+	addUser(url,params) {
+		return fetchPost(url,params).then(res => {
+			return res;
+		});
 	}
 }
