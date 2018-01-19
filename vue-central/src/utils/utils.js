@@ -10,5 +10,15 @@ export const utils = {
 		var _dateStr = _year + "-" + _month + "-" + _day + " "
 			   _hours + ":" + _minutes + ":" + _seconds;
 		return _dateStr;
+	},
+	concat(open,separator,close,datas) {
+		var _datas = '',i = 0;
+		_datas += open;
+		for (; i < datas.length - 1; ++i) {
+			_datas += datas[i] + separator;
+		}
+		_datas += datas[i];
+		_datas += close;
+		return _datas;
 	}
 }

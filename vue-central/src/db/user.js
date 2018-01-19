@@ -12,6 +12,11 @@ export const userDao = {
 			return res.data;
 		});
 	},
+	getUsersByPage(url,params) {
+		return fetchGet(url,params).then(res => {
+			return res.data;
+		});
+	},
 	getLikeUserName(url,params) {
 		return fetchGet(url,params).then(res => {
 			return res.data;
@@ -19,6 +24,11 @@ export const userDao = {
 	},
 	addUser(url,params) {
 		return fetchPost(url,params).then(res => {
+			return res;
+		});
+	},
+	deleteUsers(url,params) {
+		return fetchGet(url,params).then(res => {
 			return res;
 		});
 	}

@@ -141,6 +141,19 @@
 			</el-table>
 		</div>
 
+		<!-- 页面分页组件 -->
+		<div class="s-row pull-right">
+			<el-pagination
+		      @size-change="handleSizeChange"
+		      @current-change="handleCurrentChange"
+		      :current-page="page.currentPage"
+		      :page-sizes="page.pageSizes"
+		      :page-size="page.pageSize"
+		      layout="total, sizes, prev, pager, next, jumper"
+		      :total="page.total">
+		    </el-pagination>
+		</div>
+
 		<!-- 信息模态框 -->
 		<el-dialog title="添加用户" 
 			:visible.sync="addUserDialog"
@@ -159,12 +172,25 @@
 						clearable
 					/>
 				</el-form-item>
-				<el-form-item label="性别" prop="sex">
-					<el-select v-model="userInfo.sex" placeholder="请选性别">
-						<el-option label="男" value="0"></el-option>
-						<el-option label="女" value="1"></el-option>
-					</el-select>
-				</el-form-item>
+				<el-row>
+					<el-col :span="12">
+						<el-form-item label="性别" prop="sex">
+							<el-select v-model="userInfo.sex" placeholder="请选性别">
+								<el-option label="男" value="0"></el-option>
+								<el-option label="女" value="1"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+					<el-col :span="12">
+						<el-form-item label="状态" prop="locked">
+							<el-select v-model="userInfo.locked" placeholder="请选状态">
+								<el-option label="未激活" value="0"></el-option>
+								<el-option label="正常" value="1"></el-option>
+								<el-option label="已禁用" value="2"></el-option>
+							</el-select>
+						</el-form-item>
+					</el-col>
+				</el-row>
 				<el-form-item label="手机号码" prop="phone">
 					<el-input 
 						v-model="userInfo.phone" 
@@ -175,7 +201,14 @@
 					<el-input v-model="userInfo.email" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="出生日期" prop="birthday">
-					<el-date-picker type="date" placeholder="选择日期" v-model="userInfo.birthday" style="width: 100%;"></el-date-picker>
+					<el-date-picker 
+						type="datetime" 
+						placeholder="选择日期" 
+						v-model="userInfo.birthday"
+						value-format="yyyy-MM-dd HH:mm:ss"
+						clearable
+						style="width:100%;"
+					/>
 				</el-form-item>
 			</el-form>
 			<div slot="footer" class="dialog-footer">
@@ -192,9 +225,9 @@
 	export default {
 		name: 'component-user-manager',
 		mounted () {
-			userDao.getUserList("/user/lists.json").then(res => {
-				this.userLists = res;
-			});
+			var _url = this.page.request_url + this.page.currentPage + 
+					   '/' + this.page.pageSize;
+			this.userListsByPage(_url);
 		},
 		data () {
 			return {
@@ -205,20 +238,31 @@
 				editUserDialog: false,
 				formLabelWidth: '120px',
 				userInfo: {
+					id: '',
 					userName: '',
 					nickName: '',
 					password: '',
 					sex: '',
+					locked: '',
 					phone: '',
 					email: '',
 					birthday: ''
 				},
-				selectedItems: []
+				selectedItems: [],
+				//分页配置
+				page: {
+					currentPage: 1,
+					pageSize: 5,
+					pageSizes: [5,10,20,30],
+					total: 20,
+					request_url: '/user/lists_by_pagination.json/'
+				}
 			}
 		},
 		methods: {
 			handleSelectionChange(val) {
 				this.selectedItems = val;
+				console.log('all selections: ',this.selectedItems);
 			},
 			sexFormatter (row,column,cellVal) {
 				// console.log("sex...",cellVal);
@@ -275,11 +319,8 @@
 				/*
 				* 添加用户信息提交
 				*/
-				// this.$refs.userInfoForm.resetFields();
 				console.log("user info",JSON.stringify(this.userInfo));
-				var _userInfo = this.userInfo;
-				//格式化时间字符串
-				utils.dateFormat(this.userInfo.birthday);
+				var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
 				userDao.addUser("/user/add.json",JSON.stringify(this.userInfo))
 					.then(res => {
 						if (1 == res.code) {
@@ -292,20 +333,25 @@
 						} else {
 							this.$message.error(res.msg);
 						}
-						// console.log(res);
 					}).catch(err => {
 						console.log("error: ",err);
 					});
-				this.$refs.multipleTable.doLayout();
+				console.log("user info:",this.userLists);
 				this.addUserDialog = !this.addUserDialog;
 			},
 			editUser () {
 
 			},
-			deleteUser (userId) {
+			getSelectionIds () {
+				var _ids = [];
+				this.selectedItems.forEach(row => {
+					_ids.push(row.id);
+				});
+				return _ids;
+			},
+			deleteUser () {
 				var _data = this.selectedItems;
 				var _length = _data.length;
-				console.log("delete number: ",_length);
 				if (_length <= 0) {
 					this.$message({
 			          message: '请选择要删除的数据!',
@@ -319,35 +365,57 @@
 									cancelButtonText: '取消',
 									type: 'warning'
 					}).then(() => {
-						var _userLists = this.userLists;
-						var _indexs = [];
-						_userLists.forEach(row => {
-							_indexs.push(row.id);
-						});
-						console.log("row id:",_indexs);
-						for (var i = 0; i < _length; ++i) {
-							var _item = _data[i];
-							console.log("index: ",_userLists.indexOf(_item));
-							_userLists.splice(_userLists.indexOf(_item),1);
-						}
-						this.selectedItems = [];
-						this.$message({
-							type: 'success',
-							message: '删除成功!'
-						});
-					}).catch((err) => {
-						console.log("error:",err);
-						//取消操作回调函数
-						this.$message({
-							type: 'info',
-							message: '取消操作'
-						});
+						//请求服务端删除操作
+						var _ids = utils.concat('',',','',this.getSelectionIds());
+						// console.log("_ids: ",_ids);
+						var _deleteUrl = "/user/delete_batch.json/"
+										 + _ids;
+						console.log("delete url: ",_deleteUrl);
+						userDao.deleteUsers(_deleteUrl)
+							   .then(res => {
+							   		if (1 == res.code) {
+							   			this.$message({
+							   				type: 'success',
+							   				message: res.msg
+							   			});
+							   			//删除客户端数据
+							   			var _userLists = this.userLists;
+							   			for (var i = 0; i < _length; ++i) {
+							   				var _item = _data[i];
+							   				_userLists.splice(_userLists.indexOf(_item),1);
+							   			}
+							   			this.selectedItems = [];
+							   		} else {
+							   			this.$message.error(res.msg);
+							   		}
+							   });
+					}).catch(err => {
+						console.log('cancel operation',err);
 					});
 				}
 			},
 			addRoles () {
 				// this.dialogFormVisible = !this.dialogFormVisible;
 			},
+			handleSizeChange(val) {
+				this.page.pageSize = val;
+				var _url = this.page.request_url + 
+						   this.page.currentPage + '/' + this.page.pageSize;
+				this.userListsByPage(_url);
+				console.log(`每页 ${val} 条`);
+			},
+			handleCurrentChange(val) {
+				var _url = this.page.request_url + 
+						   val + '/' + this.page.pageSize;
+				this.userListsByPage(_url);
+				console.log(`当前页: ${val}`);
+			},
+			userListsByPage(url) {
+				userDao.getUsersByPage(url).then(res => {
+					this.userLists = res.list;
+					console.log(res);
+				});
+			}
 		}
 	}
 </script>
