@@ -225,8 +225,11 @@
 	export default {
 		name: 'component-user-manager',
 		mounted () {
-			var _url = this.page.request_url + this.page.currentPage + 
-					   '/' + this.page.pageSize;
+			var _url = utils.resolvePathParams(this.page.request_url,
+											  this.page.currentPage,
+											  this.page.pageSize);
+			_url = utils.authorize(_url);
+			// console.log('url:',_url);
 			this.userListsByPage(_url);
 		},
 		data () {
@@ -255,7 +258,7 @@
 					pageSize: 5,
 					pageSizes: [5,10,20,30],
 					total: 20,
-					request_url: '/user/lists_by_pagination.json/'
+					request_url: '/user/lists_by_pagination.json'
 				}
 			}
 		},
@@ -306,11 +309,13 @@
 				* 用户名模糊查询
 				*/
 				if ('' == this.userSearch) {
-					userDao.getUserList("/user/lists.json").then(res => {
+					var _url = utils.authorize('/user/lists.json');
+					userDao.getUserList(_url).then(res => {
 						this.userLists = res;
 					});
 				} else {
-					userDao.getLikeUserName("/user/query_like_username.json/" + this.userSearch).then(res => {
+					var _url = utils.authorize('/user/query_like_username.json/' +this.userSearch);
+					userDao.getLikeUserName(_url).then(res => {
 						this.userLists = res;
 					});
 				}
@@ -319,9 +324,10 @@
 				/*
 				* 添加用户信息提交
 				*/
+				var _url = utils.authorize('/user/add.json');
 				console.log("user info",JSON.stringify(this.userInfo));
 				var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
-				userDao.addUser("/user/add.json",JSON.stringify(this.userInfo))
+				userDao.addUser(_url,JSON.stringify(this.userInfo))
 					.then(res => {
 						if (1 == res.code) {
 							this.$message({
@@ -368,10 +374,9 @@
 						//请求服务端删除操作
 						var _ids = utils.concat('',',','',this.getSelectionIds());
 						// console.log("_ids: ",_ids);
-						var _deleteUrl = "/user/delete_batch.json/"
-										 + _ids;
-						console.log("delete url: ",_deleteUrl);
-						userDao.deleteUsers(_deleteUrl)
+						var _url = utils.authorize('/user/delete_batch.json/' + _ids);
+						console.log("delete url: ",_url);
+						userDao.deleteUsers(_url)
 							   .then(res => {
 							   		if (1 == res.code) {
 							   			this.$message({
@@ -399,14 +404,17 @@
 			},
 			handleSizeChange(val) {
 				this.page.pageSize = val;
-				var _url = this.page.request_url + 
-						   this.page.currentPage + '/' + this.page.pageSize;
+				var _url = utils.resolvePathParams(this.page.request_url,
+												  this.page.currentPage,
+												  this.page.pageSize);
+				_url = utils.authorize(_url);
 				this.userListsByPage(_url);
 				console.log(`每页 ${val} 条`);
 			},
 			handleCurrentChange(val) {
-				var _url = this.page.request_url + 
-						   val + '/' + this.page.pageSize;
+				var _url = utils.resolvePathParams(this.page.request_url,
+												   val,this.page.pageSize);
+				_url = utils.authorize(_url);
 				this.userListsByPage(_url);
 				console.log(`当前页: ${val}`);
 			},

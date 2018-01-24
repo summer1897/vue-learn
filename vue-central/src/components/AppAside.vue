@@ -13,9 +13,9 @@
 					<i class="el-icon-location"></i>
 					<span slot="title">权限管理</span>
 				</template>
-				<el-menu-item index="/user/list" route="/user/list">用户管理</el-menu-item>
-				<el-menu-item index="1-2" route="/role/list">角色管理</el-menu-item>
-				<el-menu-item index="1-3" route="/permission/list">权限管理</el-menu-item>
+				<el-menu-item index="/user/list.vhtml" route="/user/list.vhtml">用户管理</el-menu-item>
+				<el-menu-item index="1-2" route="/role/list.vhtml">角色管理</el-menu-item>
+				<el-menu-item index="1-3" route="/permission/list.vhtml">权限管理</el-menu-item>
 			</el-submenu>
 			<el-submenu index="2">
 				<template slot="title">

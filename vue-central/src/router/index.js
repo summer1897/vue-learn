@@ -35,6 +35,7 @@ const routes = [
 
 // 页面刷新时，重新赋值token
 if (window.localStorage.getItem(constants.ACCESS_TOKEN)) {
+    // console.log('token',window.localStorage.getItem(constants.ACCESS_TOKEN));
     store.commit(constants.LOGIN, 
       window.localStorage.getItem(constants.ACCESS_TOKEN));
 }

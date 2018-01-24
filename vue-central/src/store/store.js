@@ -6,8 +6,7 @@ Vue.use(Vuex)
 
 const state = {
 	user: {},
-	token: null,
-	title: ''
+	token: null
 };
 
 const getters = {
@@ -20,15 +19,12 @@ const actions = {
 
 const mutations = {
 	login (state,data) {
-		localStorage.token = data;
+		localStorage.access_token = data;
 		state.token = data;
 	},
 	logout (state,data) {
 		localStorage.removeItem(constants.ACCESS_TOKEN);
 		state.token = null;
-	},
-	title (state,data) {
-		state.title = data;
 	}
 };
 
