@@ -3,7 +3,7 @@
 		<el-card>
 			<div slot="header" class="clearfix">
 				<span>登录框</span>
-				<el-button style="float: right; padding: 3px 0" type="text">操作按钮</el-button>
+				<el-button style="float: right; padding: 3px 0" type="text">注册</el-button>
 			</div>
 			<el-form :model="loginForm" status-icon :rules="validateRules" ref="loginForm" label-width="100px" class="demo-ruleForm">
 				<el-form-item label="用户名" prop="userName">
@@ -67,7 +67,7 @@
 							"userName": this.loginForm.userName,
 							"password": this.loginForm.password
 						}
-						console.log('submit data is: ',_data);
+						// console.log('submit data is: ',_data);
 						loginDao.login('/login.json',_data).then(res => {
 							if (httpStatus.STATUS_OK == res.code) {
 								store.commit('login',res.data);
@@ -78,7 +78,8 @@
 								this.$router.push('/');
 								console.log('login successfully!');
 							} else {
-								this.$message.error('密码或用户名错误');
+								this.$message.error(res.msg);
+								this.resetForm('loginForm');
 							}
 						});
 					} else {

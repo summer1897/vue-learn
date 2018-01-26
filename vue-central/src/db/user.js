@@ -31,5 +31,20 @@ export const userDao = {
 		return fetchGet(url,params).then(res => {
 			return res;
 		});
+	},
+	getUserTotal(url,params) {
+		return fetchGet(url,params).then(res => {
+			return res.data;
+		});
+	},
+	getUserRoles(url,params) {
+		return fetchGet(url,params).then(res => {
+			return res;
+		});
+	},
+	addUser(url,params) {
+		return fetchPost(url,params).then(res => {
+			return res;
+		});
 	}
 }

@@ -27,7 +27,7 @@
 	  				<el-button 
 	  					type="primary"
 	  					icon="el-icon-edit"
-						@click="editUserDialog =true"
+						@click="editUser"
 	  				>
 	  					编辑
 	  				</el-button>
@@ -37,13 +37,6 @@
 						@click="deleteUser"
 	  				>
 	  					删除
-	  				</el-button>
-	  				<el-button 
-	  					type="info"
-	  					icon="el-icon-info"
-						@click="addRoles"
-	  				>
-	  					添加角色
 	  				</el-button>
 					<!-- </el-button-group> -->
 				</el-col>
@@ -155,9 +148,7 @@
 		</div>
 
 		<!-- 信息模态框 -->
-		<el-dialog title="添加用户" 
-			:visible.sync="addUserDialog"
-			>
+		<el-dialog title="添加用户" :visible.sync="addUserDialog">
 			<el-form :model="userInfo" ref="userInfoForm" label-width="80px">
 				<el-form-item label="用户名" prop="userName">
 					<el-input v-model="userInfo.userName" clearable></el-input>
@@ -217,20 +208,19 @@
 			</div>
 		</el-dialog>
 		<!-- END信息模态框 -->
+		<app-info-edit-dialog :info="info"
+							  ref="userEditDialog"
+							  v-on:editSubmit='editUserSubmit'/>
 	</div>
 </template>
 <script type="text/javascript">
 	import {userDao} from '@/db/user'
 	import {utils} from '@/utils/utils'
+	import AppInfoEditDialog from './AppInfoEditDialog'
 	export default {
 		name: 'component-user-manager',
 		mounted () {
-			var _url = utils.resolvePathParams(this.page.request_url,
-											  this.page.currentPage,
-											  this.page.pageSize);
-			_url = utils.authorize(_url);
-			// console.log('url:',_url);
-			this.userListsByPage(_url);
+			this.userListsByPage();
 		},
 		data () {
 			return {
@@ -249,15 +239,17 @@
 					locked: '',
 					phone: '',
 					email: '',
-					birthday: ''
+					birthday: '',
+					roles: []
 				},
+				info: {},
 				selectedItems: [],
 				//分页配置
 				page: {
 					currentPage: 1,
 					pageSize: 5,
 					pageSizes: [5,10,20,30],
-					total: 20,
+					total: null,
 					request_url: '/user/lists_by_pagination.json'
 				}
 			}
@@ -265,29 +257,28 @@
 		methods: {
 			handleSelectionChange(val) {
 				this.selectedItems = val;
-				console.log('all selections: ',this.selectedItems);
+				// console.log('all selections: ',this.selectedItems);
 			},
 			sexFormatter (row,column,cellVal) {
-				// console.log("sex...",cellVal);
-				var _sex = '';
-				if (cellVal == 0) {
-					_sex = '男';
-				} else {
-					_sex = '女';
-				}
-				return _sex;
+				return this.getSexStr(cellVal);
+			},
+			getSexStr(val) {
+				return 0 == val ? '男' : '女';
 			},
 			filterSexTag (value,row) {
-				var _sex = row.sex == 0 ? '男' : '女';
+				var _sex = this.getSexStr(row.sex);
 				return _sex == value;
 			},
 			statusFormatter (row,column,cellVal) {
+				return this.getStatusStr(cellVal);
+			},
+			getStatusStr(val) {
 				var _labelName = '';
-				if (0 == cellVal) {
+				if (0 == val) {
 					_labelName = '未激活';
-				} else if (1 == cellVal) {
+				} else if (1 == val) {
 					_labelName = '正常';
-				} else if (2 == cellVal) {
+				} else if (2 == val) {
 					_labelName = '已禁用';
 				}
 				return _labelName;
@@ -309,10 +300,7 @@
 				* 用户名模糊查询
 				*/
 				if ('' == this.userSearch) {
-					var _url = utils.authorize('/user/lists.json');
-					userDao.getUserList(_url).then(res => {
-						this.userLists = res;
-					});
+					this.userListsByPage();
 				} else {
 					var _url = utils.authorize('/user/query_like_username.json/' +this.userSearch);
 					userDao.getLikeUserName(_url).then(res => {
@@ -326,7 +314,7 @@
 				*/
 				var _url = utils.authorize('/user/add.json');
 				console.log("user info",JSON.stringify(this.userInfo));
-				var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
+				// var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
 				userDao.addUser(_url,JSON.stringify(this.userInfo))
 					.then(res => {
 						if (1 == res.code) {
@@ -334,19 +322,37 @@
 			          			message: res.msg,
 			          			type: 'success'
         					});
-        					this.userLists.push(_userInfo);
-        					this.$refs.userInfoForm.resetFields();
+        					this.userListsByPage();
+        					// this.userLists.push(_userInfo);
+        					this.userFormReset('userInfoForm');
 						} else {
 							this.$message.error(res.msg);
 						}
 					}).catch(err => {
 						console.log("error: ",err);
 					});
-				console.log("user info:",this.userLists);
+				// console.log("user info:",this.userLists);
 				this.addUserDialog = !this.addUserDialog;
 			},
 			editUser () {
-
+				var _data = this.selectedItems;
+				var _length = _data.length;
+				if (_length <= 0) {
+					this.$message({
+			          message: '请选择要编辑的数据!',
+			          type: 'warning'
+        			});
+				} else {
+					this.$refs.userEditDialog.editUserDialog = true;
+					this.info = JSON.parse(JSON.stringify(_data[0]));
+					this.info.sex = this.getSexStr(this.info.sex);
+					this.info.locked = this.getStatusStr(this.info.locked);
+					this.editUserDialog = !this.editUserDialog;
+					// console.log('user info',this.info);
+				}
+			},
+			editUserSubmit (info) {
+				console.log('submit info:',info);
 			},
 			getSelectionIds () {
 				var _ids = [];
@@ -384,11 +390,12 @@
 							   				message: res.msg
 							   			});
 							   			//删除客户端数据
-							   			var _userLists = this.userLists;
+							   			/*var _userLists = this.userLists;
 							   			for (var i = 0; i < _length; ++i) {
 							   				var _item = _data[i];
 							   				_userLists.splice(_userLists.indexOf(_item),1);
-							   			}
+							   			}*/
+							   			this.userListsByPage();
 							   			this.selectedItems = [];
 							   		} else {
 							   			this.$message.error(res.msg);
@@ -399,31 +406,38 @@
 					});
 				}
 			},
-			addRoles () {
-				// this.dialogFormVisible = !this.dialogFormVisible;
-			},
 			handleSizeChange(val) {
 				this.page.pageSize = val;
-				var _url = utils.resolvePathParams(this.page.request_url,
-												  this.page.currentPage,
-												  this.page.pageSize);
-				_url = utils.authorize(_url);
-				this.userListsByPage(_url);
-				console.log(`每页 ${val} 条`);
+				this.userListsByPage();
+				// console.log(`每页 ${val} 条`);
 			},
 			handleCurrentChange(val) {
-				var _url = utils.resolvePathParams(this.page.request_url,
-												   val,this.page.pageSize);
-				_url = utils.authorize(_url);
-				this.userListsByPage(_url);
+				this.page.currentPage = val;
+				this.userListsByPage();
 				console.log(`当前页: ${val}`);
 			},
-			userListsByPage(url) {
-				userDao.getUsersByPage(url).then(res => {
+			userListsByPage() {
+				var _url = utils.resolvePathParams(this.page.request_url,
+											  this.page.currentPage,
+											  this.page.pageSize);
+				_url = utils.authorize(_url);
+				this.setUserTotal();
+				userDao.getUsersByPage(_url).then(res => {
 					this.userLists = res.list;
-					console.log(res);
 				});
+			},
+			setUserTotal() {
+				var _totalUrl = utils.authorize('/user/total.json');
+				userDao.getUserTotal(_totalUrl).then(res => {
+					this.page.total = parseInt(res.total);
+				});
+			},
+			userFormReset(formName) {
+				this.$refs[formName].resetFields();
 			}
+		},
+		components: {
+			AppInfoEditDialog
 		}
 	}
 </script>
