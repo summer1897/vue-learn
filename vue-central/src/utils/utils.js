@@ -77,7 +77,7 @@ export const utils = {
 			}
 		}
 		return -1;
-	}
+	},
 	/*
 	* 复制
 	*/

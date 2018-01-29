@@ -13,29 +13,25 @@
 						type="warning" 
 						icon="el-icon-search"
 						@click="searchUser"
-					>
-						搜索
+					>搜索
 					</el-button>
 					<el-button 
 						type="success"
 						icon="el-icon-plus"
 						@click="addUserDialog=true"
-					>
-						添加
+					>添加
 					</el-button>
 	  				<el-button 
 	  					type="primary"
 	  					icon="el-icon-edit"
 						@click="editUser"
-	  				>
-	  					编辑
+	  				>编辑
 	  				</el-button>
 	  				<el-button 
 	  					type="danger"
 	  					icon="el-icon-delete"
 						@click="deleteUser"
-	  				>
-	  					删除
+	  				>删除
 	  				</el-button>
 				</el-col>
 			</el-row>

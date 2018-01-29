@@ -14,29 +14,25 @@
 						type="warning" 
 						icon="el-icon-search"
 						@click="searchRole"
-					>
-						搜索
+					>搜索
 					</el-button>
 					<el-button 
 						type="success"
 						icon="el-icon-plus"
 						@click="addRole"
-					>
-						添加
+					>添加
 					</el-button>
 	  				<el-button 
 	  					type="primary"
 	  					icon="el-icon-edit"
 						@click="editRole"
-	  				>
-	  					编辑
+	  				>编辑
 	  				</el-button>
 	  				<el-button 
 	  					type="danger"
 	  					icon="el-icon-delete"
 						@click="deleteRole"
-	  				>
-	  					删除
+	  				>删除
 	  				</el-button>
 				</el-col>
 			</el-row>
@@ -117,10 +113,17 @@
 
 		<!-- 角色添加弹出框 -->
 		<app-role-add-dialog ref="roleAddDialog" v-on:addRole="addRoleSubmit" />
+		<!-- 角色编辑弹出框 -->
+		<app-role-edit-dialog 
+			ref="roleEditDialog" 
+			v-on:editRole="editRoleSubmit"
+			:role="editRoleInfo"
+		/>
 	</div>
 </template>
 <script type="text/javascript">
 	import AppRoleAddDialog from './AppRoleAddDialog'
+	import AppRoleEditDialog from './AppRoleEditDialog'
 	import {utils} from '@/utils/utils'
 	import {roleDao} from '@/db/role'
 	import {httpStatus} from '@/constant/constant'
@@ -138,6 +141,7 @@
 				align: 'center',
 				//角色信息源
 				roleLists: [],
+				editRoleInfo: {},
 				selectedItems: [],
 				//分页配置
 				page: {
@@ -200,7 +204,7 @@
 				var _selectedItem = [];
 				if (_selected.length <= 0) {
 					this.$message({
-			          message: '请选择要编辑的数据!',
+			          message: '请选择要删除的数据!',
 			          type: 'warning'
         			});
 				} else {
@@ -209,7 +213,40 @@
 				return _selectedItem;
 			},
 			editRole () {
-				this.isSelected();
+				let _selectedItem = this.isSelected();
+				if (_selectedItem.length > 0) {
+					this.editRoleInfo = utils.copy(_selectedItem[0]);
+					this.editRoleInfo.available = this.editRoleInfo.available ? true:false;
+					this.$refs.roleEditDialog.editRoleDialog = true;
+				}
+			},
+			editRoleSubmit (role) {
+				console.log('modify role info:',role);
+				if (role) {
+					this.$confirm('确定修改该角色信息?',
+								  '提示',
+								  {
+									confirmButtonText: '确定',
+									cancelButtonText: '取消',
+									type: 'warning'
+					}).then(() => {
+						var _url = utils.authorize('/role/update.json');
+						roleDao.updateRole(_url,role).then(res => {
+							if (res.code === httpStatus.STATUS_OK) {
+								this.$message({
+					   				type: 'success',
+					   				message: res.msg
+								});
+								this.goToFirstPage();
+								this.selectedItems = [];
+							} else {
+								this.$message.error(res.msg);
+							}
+						});
+					}).catch(err => {
+						console.log('cancel');
+					});
+				}
 			},
 			deleteRole () {
 				var _selectedItem = this.isSelected();
@@ -301,7 +338,7 @@
 			} 
 		},
 		components: {
-			AppRoleAddDialog
+			AppRoleAddDialog,AppRoleEditDialog
 		}
 	}
 </script>

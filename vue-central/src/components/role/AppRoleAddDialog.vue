@@ -1,6 +1,6 @@
 <template>
 	<div id="component-role-add-dialog">
-		<!-- 信息编辑模态框 -->
+		<!-- 角色信息添加模态框 -->
 		<el-dialog title="角色添加" 
 					:visible.sync="addRoleDialog">
 			<el-form :model="role" ref="roleInfoForm" label-width="80px">
@@ -19,7 +19,7 @@
 				<el-button type="primary" @click="addRoleSubmit">添加</el-button>
 			</div>
 		</el-dialog>
-		<!-- END信息编辑模态框 -->
+		<!-- END角色信息添加模态框 -->
 	</div>
 </template>
 <script type="text/javascript">

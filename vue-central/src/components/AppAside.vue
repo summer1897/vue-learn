@@ -52,6 +52,11 @@
 <script type="text/javascript">
 	export default {
 		name: 'component-aside',
+		created () {
+			this.$root.Bus.$on('collapseToggle',val => {
+				this.isCollapse = val.isCollapse;
+			})
+		},
 		data () {
 			return {
 				isCollapse: false
@@ -64,6 +69,9 @@
 			handleClose(key, keyPath) {
 				// console.log(key, keyPath);
 			}
+		},
+		beforeDestroy() {
+  			this.$root.Bus.$off('collapseToggle');
 		}
 	}
 </script>

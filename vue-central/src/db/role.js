@@ -25,5 +25,10 @@ export const roleDao = {
 		return fetchGet(url,params).then(res => {
 			return res;
 		});
+	},
+	updateRole(url,params) {
+		return fetchPost(url,params).then(res => {
+			return res;
+		});
 	}
 }
