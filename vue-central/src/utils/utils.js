@@ -62,5 +62,20 @@ export const utils = {
 			_url += '?' + constants.ACCESS_TOKEN + '=' + store.state.token;
 		}
 		return _url;
+	},
+	/*
+	* javascript对象查询
+	*/
+	indexOf(source,target) {
+		if (source && source instanceof Array) {
+			for (var i = 0; i < source.length; ++i) {
+				let _data = JSON.stringify(source[i]);
+				let _target = JSON.stringify(target);
+				if (_data === _target) {
+					return i;
+				}
+			}
+		}
+		return -1;
 	}
 }

@@ -49,8 +49,8 @@
 						style="width:100%;"
 					/>
 				</el-form-item>
-				<el-form-item label="用户角色" prop="roles">
-					<el-tag v-for="(role,index) in userRoles" v-model="userRoles"
+				<el-form-item label="用户角色" prop="userRoles">
+					<el-tag v-for="(role,index) in userRoles" v-model="info.userRoles"
 						closable
 						@close="handleClose(role)"
 						:key="role.id"
@@ -60,7 +60,7 @@
 					<!-- <el-input
 						class="input-new-tag"
 						v-if="inputVisible"
-						v-model="inputValue"
+						v-model="role"
 						ref="saveTagInput"
 						size="small"
 						@keyup.enter.native="handleInputConfirm"
@@ -70,7 +70,7 @@
 					<el-autocomplete
 						class="input-new-tag"
 						v-if="inputVisible"
-						v-model="inputValue"
+						v-model="role"
 						ref="saveTagInput"
 						size="small"
 						@keyup.enter.native="handleInputConfirm"
@@ -99,20 +99,21 @@
 	export default {
 		name: 'user-edit-dialog-component',
 		props: ['info'],
+
 		data () {
 			return {
 				editUserDialog: false,
 				roles: [],
 				userRoles: [],
 				inputVisible: false,
-				inputValue: '',
+				role: '',
+				tmepRole: null
 				
 			};
 		},
 		methods: {
 			handlerOpen() {
 				this.queryUserRoles();
-				this.queryAllRoles();
 			},
 			editUserSubmit () {
 				this.$emit('editSubmit',this.info);
@@ -120,6 +121,7 @@
 			},
 			editCancel () {
 				this.resetForm('userInfoForm');
+				this.userRoles = [];
 				this.editUserDialog = !this.editUserDialog;
 			},
 			resetForm(formName) {
@@ -133,7 +135,7 @@
 					userDao.getUserRoles(_queryRolesUrl).then(res => {
 						//我编辑信息添加用户角色信息
 						// console.log('roles:',res);
-						this.userRoles = res.data;
+						this.formatDatas(res.data,this.userRoles)
 					});
 				}
 			},
@@ -141,44 +143,70 @@
 				var _url = utils.authorize('/role/query_all_available.json');
 				roleDao.getAllAvailableInfos(_url).then(res => {
 					if (res.code == httpStatus.STATUS_OK) {
-						var _roles = res.data;
-						if (_roles.length > 0) {
-							for (var i = 0; i < _roles.length; ++i) {
-								var _role = {
-									'value': _roles[i].name,
-									'id': _roles[i].id
-								};
-								this.roles.push(_role);
-							}
-						}
+						this.formatDatas(res.data,this.roles);
 					}
 				});
+			},
+			formatDatas(datas,container) {
+				var _roles = datas;
+				if (_roles && _roles.length > 0) {
+					for (var i = 0; i < _roles.length; ++i) {
+						var _role = {
+							'id': _roles[i].id,
+							'value': _roles[i].name
+						};
+						container.push(_role);
+					}
+				}
 			},
 			handleClose(role) {
 				this.userRoles.splice(this.userRoles.indexOf(role), 1);
 			},
 			showInput() {
-				this.inputVisible = true;
+				this.inputVisible = !this.inputVisible;
 				this.$nextTick(_ => {
 					this.$refs.saveTagInput.$refs.input.focus();
 				});
+				this.roles = [];
+				//查询所有角色
+				this.queryAllRoles();
 			},
 			handleInputConfirm() {
-				/*let inputValue = this.inputValue;
-				if (inputValue) {
-					this.roles.push(inputValue);
+				var _tmp = this.tmepRole;
+				if (_tmp) {
+					this.userRoles.push(_tmp);
+					this.role = '';
+					this.tmepRole = null;
 				}
-				this.inputVisible = false;
-				this.inputValue = '';*/
-			},
-			handleSelect(item) {
-				console.log('add role is: ',item);
-				this.userRoles.push(item);
 				this.inputVisible = !this.inputVisible;
 			},
+			handleSelect(item) {
+				if (item) {
+					this.tmepRole = item;
+					// console.log('add role is: ',item);
+					// this.userRoles.push(item);
+					// this.role = '';
+					// this.inputVisible = !this.inputVisible;
+				}
+			},
 			querySearch(queryString, cb) {
-				console.log('suggest roles',this.roles);
-				cb(this.roles);
+				var _roles = this.roles;
+				var _userRoles = this.userRoles;
+				//过滤掉已经添加的角色
+				for (var i = 0; i < _userRoles.length; ++i) {
+					let _index = utils.indexOf(_roles,_userRoles[i]);
+					_roles.splice(_index,1);
+				}
+				var _results = queryString ? _roles.filter(this.createFilter(queryString)) : _roles;
+				cb(_results);
+	      	},
+	      	/*
+	      	* 根据输入的查询字符串筛选匹配的值
+	      	*/
+	      	createFilter(queryString) {
+	      		return (roles) => {
+	      			return (roles.value.indexOf(queryString) === 0);
+	      		}
 	      	}
 		}
 	}
