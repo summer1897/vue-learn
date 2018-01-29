@@ -62,5 +62,15 @@ export const utils = {
 			_url += '?' + constants.ACCESS_TOKEN + '=' + store.state.token;
 		}
 		return _url;
+	},
+	/*
+	* 复制
+	*/
+	copy(data) {
+		let _copier = null;
+		if (data) {
+			_copier = JSON.parse(JSON.stringify(data));
+		}
+		return _copier;
 	}
 }

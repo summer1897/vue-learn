@@ -4,6 +4,8 @@ import Router from 'vue-router'
 import {constants} from '@/constant/constant'
 import AppLayout from '@/components/AppLayout'
 import AppUserManager from '@/components/user/AppUserManager'
+import AppRoleManager from '@/components/role/AppRoleManager'
+import AppPermissionManager from '@/components/permission/AppPermissionManager'
 import AppTreeMenu from '@/components/permission/AppTreeMenu'
 import PageNotFound from '@/components/error/AppPageNotFound'
 import AppLogin from '@/components/AppLogin'
@@ -23,6 +25,16 @@ const routes = [
           name: 'AppUserManager',
           path: '/user/list.vhtml',
           component: AppUserManager
+        },
+        {
+          name: 'AppRoleManager',
+          path: '/role/list.vhtml',
+          component: AppRoleManager
+        },
+        {
+          name: 'AppPermissionManager',
+          path: '/permission/list.vhtml',
+          component: AppPermissionManager
         }
       ]
     },
@@ -30,6 +42,11 @@ const routes = [
       path: constants.LOGIN_URL,
       name: 'AppLogin',
       component: AppLogin
+    },
+    {
+      path: '/error/404.vhtml',
+      name: 'PageNotFound',
+      component: PageNotFound
     }
 ];
 
