@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store/store'
 import router from '@/router/index'
 import { Loading, Message } from 'element-ui'
-import {constants} from '@/constant/constant'
+import {constants,errorPages} from '@/constant/constant'
 
 // axios.defaults.timeout = 5000;
 axios.defaults.baseURL = 'http://localhost:9000/central';
@@ -72,13 +72,27 @@ axios.interceptors.response.use(
     },
     error => {
     	_loadinginstace.close();
+        console.log('error:',error.response.status);
     	Message.error({
     		message: '加载失败'
     	});
-        router.replace({
-                        path: constants.LOGIN_URL,
+
+        if (error.response && error.response.status) {
+            var _status = error.response.status;
+            switch(_status) {
+                case 404:
+                    router.replace({
+                        path: errorPages.PAGE_404,
                         query: {redirect: router.currentRoute.fullPath}
                     });
+                    break;
+            }
+        }
+
+        /*router.replace({
+                        path: constants.LOGIN_URL,
+                        query: {redirect: router.currentRoute.fullPath}
+                    });*/
         return Promise.reject(error.response)
 });
 

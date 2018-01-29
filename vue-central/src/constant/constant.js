@@ -21,3 +21,10 @@ export const httpStatus = {
 	"STATUS_503": 503,
 	"STATUS_504": 504
 };
+
+/*
+* 错误跳转页面
+*/
+export const errorPages = {
+	"PAGE_404": '/error/404.vhtml'
+}

@@ -9,7 +9,6 @@
 					</el-input>
 				</el-col>
 				<el-col :span="16">
-					<!-- <el-button-group> -->
 					<el-button 
 						type="warning" 
 						icon="el-icon-search"
@@ -38,7 +37,6 @@
 	  				>
 	  					删除
 	  				</el-button>
-					<!-- </el-button-group> -->
 				</el-col>
 			</el-row>
 		</div>
@@ -210,7 +208,7 @@
 		<!-- END信息模态框 -->
 		<app-info-edit-dialog :info="info"
 							  ref="userEditDialog"
-							  v-on:editSubmit='editUserSubmit'/>
+							  v-on:editSubmit="editUserSubmit"/>
 	</div>
 </template>
 <script type="text/javascript">
@@ -239,8 +237,8 @@
 					locked: '',
 					phone: '',
 					email: '',
-					birthday: '',
-					roles: []
+					birthday: ''
+					// roles: []
 				},
 				info: {},
 				selectedItems: [],
@@ -389,12 +387,6 @@
 							   				type: 'success',
 							   				message: res.msg
 							   			});
-							   			//删除客户端数据
-							   			/*var _userLists = this.userLists;
-							   			for (var i = 0; i < _length; ++i) {
-							   				var _item = _data[i];
-							   				_userLists.splice(_userLists.indexOf(_item),1);
-							   			}*/
 							   			this.userListsByPage();
 							   			this.selectedItems = [];
 							   		} else {
@@ -421,15 +413,9 @@
 											  this.page.currentPage,
 											  this.page.pageSize);
 				_url = utils.authorize(_url);
-				this.setUserTotal();
 				userDao.getUsersByPage(_url).then(res => {
-					this.userLists = res.list;
-				});
-			},
-			setUserTotal() {
-				var _totalUrl = utils.authorize('/user/total.json');
-				userDao.getUserTotal(_totalUrl).then(res => {
 					this.page.total = parseInt(res.total);
+					this.userLists = res.userLists;
 				});
 			},
 			userFormReset(formName) {

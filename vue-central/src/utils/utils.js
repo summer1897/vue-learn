@@ -78,4 +78,14 @@ export const utils = {
 		}
 		return -1;
 	}
+	/*
+	* 复制
+	*/
+	copy(data) {
+		let _copier = null;
+		if (data) {
+			_copier = JSON.parse(JSON.stringify(data));
+		}
+		return _copier;
+	}
 }
