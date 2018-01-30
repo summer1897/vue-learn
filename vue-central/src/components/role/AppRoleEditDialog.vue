@@ -1,7 +1,7 @@
 <template>
 	<div id="component-role-edit-dialog">
 		<!-- 信息编辑模态框 -->
-		<el-dialog title="角色添加" 
+		<el-dialog title="角色添加"
 					:visible.sync="editRoleDialog">
 			<el-form :model="role" ref="roleInfoForm" label-width="80px">
 				<el-form-item label="角色" prop="name">
@@ -29,7 +29,7 @@
 		props: ['role'],
 		data () {
 			return {
-				editRoleDialog: false
+				editRoleDialog: false,
 			};
 		},
 		methods: {
@@ -45,7 +45,7 @@
 					this.editRoleDialog = !this.editRoleDialog;
 					this.formReset('roleInfoForm');
 				}
-				
+
 			},
 			formReset (formName) {
 				this.$refs[formName].resetFields();
