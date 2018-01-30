@@ -83,17 +83,25 @@
 					show-overflow-tooltip
 				/>
 				<el-table-column
-					prop="modifyDate"
-					label="最近修改日期"
-					:align="align"
-					show-overflow-tooltip
-				/>
-				<el-table-column
 					prop="createDate"
 					label="创建日期"
 					:align="align"
 					show-overflow-tooltip
 				/>
+				<el-table-column
+					label="操作"
+					:align="align"
+				>
+					<template slot-scope="scope">
+						<el-button 
+							type="text" 
+							size="mini"
+							icon="el-icon-edit"
+							@click="authorize(scope.row)"
+						>授权
+						</el-button>
+					</template>
+				</el-table-column>
 			</el-table>
 		</div>	
 		<!-- end role lists -->
@@ -119,11 +127,18 @@
 			v-on:editRole="editRoleSubmit"
 			:role="editRoleInfo"
 		/>
+		<!-- 角色授权框 -->
+		<app-role-authorize-dialog
+			ref="roleAuthorizeDialog"
+			:role="authorizeRoleInfo"
+			@roleAuthorize="roleAuthorizeSubmit"
+		/>
 	</div>
 </template>
 <script type="text/javascript">
 	import AppRoleAddDialog from './AppRoleAddDialog'
 	import AppRoleEditDialog from './AppRoleEditDialog'
+	import AppRoleAuthorizeDialog from './AppRoleAuthorizeDialog'
 	import {utils} from '@/utils/utils'
 	import {roleDao} from '@/db/role'
 	import {httpStatus} from '@/constant/constant'
@@ -142,6 +157,10 @@
 				//角色信息源
 				roleLists: [],
 				editRoleInfo: {},
+				authorizeRoleInfo: {
+					id: '',
+					name: ''
+				},
 				selectedItems: [],
 				//分页配置
 				page: {
@@ -281,6 +300,19 @@
 				}
 			},
 			/*
+			* 角色授权
+			*/
+			authorize (_role) {
+				// console.log('role id: ',_role);
+				this.authorizeRoleInfo.id = _role.id;
+				this.authorizeRoleInfo.name = _role.name;
+				//打开角色授权框
+				this.$refs.roleAuthorizeDialog.authorizeDialogVisible = true;
+			},
+			roleAuthorizeSubmit (_permissionsIds) {
+				console.log('authorize permission ids: ',_permissionsIds);
+			},
+			/*
 			* 分页插件
 			*/
 			handleSizeChange(val) {
@@ -338,7 +370,7 @@
 			} 
 		},
 		components: {
-			AppRoleAddDialog,AppRoleEditDialog
+			AppRoleAddDialog,AppRoleEditDialog,AppRoleAuthorizeDialog
 		}
 	}
 </script>

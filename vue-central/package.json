@@ -14,6 +14,7 @@
     "animate.css": "^3.5.2",
     "axios": "^0.17.1",
     "css-loader": "^0.28.9",
+    "easyscroll": "^1.0.1",
     "element-ui": "^2.0.11",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",

@@ -2,10 +2,10 @@
   <div id="component-layout" class="all-height">
     <el-row class="all-height">
     	<el-col :span="left" class="all-height">
-    		<app-aside/>
+    		  <app-aside/>
     	</el-col>
     	<el-col :span="right">
-    		<app-main/>
+    		  <app-main/>
     	</el-col>
     </el-row>
   </div>
@@ -14,6 +14,8 @@
 <script>
 import AppAside from './AppAside'
 import AppMain from './AppMain'
+import AppHeader from './AppHeader'
+import AppContent from './AppContent'
 export default {
   name: 'component-layout',
   created () {
@@ -30,7 +32,7 @@ export default {
     }
   },
   components: {
-  	AppAside,AppMain
+  	AppAside,AppMain,AppHeader,AppContent
   }
 }
 </script>
