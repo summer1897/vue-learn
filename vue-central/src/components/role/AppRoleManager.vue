@@ -160,8 +160,8 @@
 				authorizeRoleInfo: {
 					id: '',
 					name: '',
-          //当前编辑角色权限Id
-          permissionIds: [],
+			        //当前编辑角色权限Id
+			        permissionIds: [],
 				},
 				selectedItems: [],
 				//分页配置
@@ -308,40 +308,38 @@
 				// console.log('role id: ',_role);
 				this.authorizeRoleInfo.id = _role.id;
 				this.authorizeRoleInfo.name = _role.name;
-        var _url = utils.authorize('/role/permission_ids.json/' + _role.id);
-        db.get(_url).then(res => {
-          if (httpStatus.STATUS_OK === res.code) {
-            console.log('permission id: ',res.data);
-            this.authorizeRoleInfo.permissionIds = res.data;
-          }
-        });
-				//打开角色授权框
+		        //打开角色授权框
 				this.$refs.roleAuthorizeDialog.authorizeDialogVisible = true;
 			},
-			roleAuthorizeSubmit (_permissionsIds) {
-				console.log('authorize permission ids: ',_permissionsIds);
-        if (!_permissionsIds || _permissionsIds.length < 0) {
-          this.$message({
-            message: '勾选角色权限信息',
-            type: 'warning'
-          });
-        } else {
-          var _pids = utils.concat('',',','',_permissionsIds);
-          var _url = utils.resolvePathParams('/role/authorization.json',
-                                             this.authorizeRoleInfo.id,_pids);
-          _url = utils.authorize(_url);
-          console.log('url: ',_url);
-          db.get(_url).then(res => {
-            if (httpStatus.STATUS_OK === res.code) {
-              this.$message({
-                message: '角色授权成功',
-                type: 'success'
-              });
-            } else {
-              this.$message.error(res.msg);
-            }
-          });
-        }
+			roleAuthorizeSubmit (addingPids,deletingPids) {
+				console.log('adding pids:',addingPids);
+				console.log('deleting pids:',deletingPids);
+		        if (addingPids.length > 0 || deletingPids.length > 0) {
+		          let _addingPids = utils.concat('',',','',addingPids);
+		          let _deletingPids = utils.concat('',',','',deletingPids);
+		          if ('' === _addingPids) {
+		          	_addingPids = '-1';
+		          }
+		          if ('' === _deletingPids) {
+		          	_deletingPids = '-1';
+		          }
+		          let _url = utils.resolvePathParams('/role/authorization.json',
+		                                             this.authorizeRoleInfo.id,
+		                                             _addingPids,
+		                                             _deletingPids);
+		          _url = utils.authorize(_url);
+		          console.log('url: ',_url);
+		          db.get(_url).then(res => {
+		            if (httpStatus.STATUS_OK === res.code) {
+		              this.$message({
+		                message: '角色授权成功',
+		                type: 'success'
+		              });
+		            } else {
+		              this.$message.error(res.msg);
+		            }
+		          });
+		        }
 			},
 			/*
 			* 分页插件
