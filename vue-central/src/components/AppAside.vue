@@ -1,12 +1,15 @@
 <template>
 	<div id="component-aside" class="all-height">
-		<el-menu 
-			default-active="1-4-1" 
-			class="el-menu-vertical-demo all-height" 
-			@open="handleOpen" 
-			@close="handleClose" 
+		<el-menu
+			default-active="1-4-1"
+			class="all-height"
+			@open="handleOpen"
+			@close="handleClose"
 			:collapse="isCollapse"
 			:router="true"
+      background-color="#376956"
+      text-color="#fff"
+      active-text-color="#ffd04b"
 			>
 			<el-submenu index="1">
 				<template slot="title">
@@ -59,7 +62,7 @@
 		},
 		data () {
 			return {
-				isCollapse: false
+				isCollapse: false,
 			}
 		},
 		methods: {
@@ -75,5 +78,6 @@
 		}
 	}
 </script>
-<style scoped>
+<style scoped lang="less">
+  @import '../assets/css/base.less';
 </style>

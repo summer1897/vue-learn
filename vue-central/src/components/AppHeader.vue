@@ -7,7 +7,12 @@
 				</div>
 			</el-col>
 			<el-col :span="23">
-				<el-menu mode="horizontal">
+				<el-menu
+            mode="horizontal"
+            background-color="#376956"
+            text-color="#fff"
+            active-text-color="#ffd04b"
+        >
 					<el-menu-item index="1">首页</el-menu-item>
 					<el-submenu index="2">
 						<template slot="title">我的工作台</template>
@@ -42,13 +47,13 @@
 			menuToggle () {
 				this.datas.isCollapse = !this.datas.isCollapse;
 				if (this.datas.isCollapse) {
-					this.datas.leftSpan = 2;
-					this.datas.rightSpan = 22;
+					this.datas.leftSpan = 0;
+					this.datas.rightSpan = 24;
 				} else {
 					this.datas.leftSpan = 4;
 					this.datas.rightSpan = 20;
 				}
-				
+
 				this.$root.Bus.$emit('collapseToggle',this.datas);
 			}
 		}
@@ -57,14 +62,16 @@
 <style type="text/css">
 	.menu-toggle {
 		height:60px;
-		line-height:60px; 
+		line-height:60px;
 		text-align: center;
 		padding:0px 15px;
 		border-bottom:1px solid #e6e6e6;
 		cursor: pointer;
+    background-color: #376956;
+    color: #fff;
 		/*border: 1px solid green;*/
 	}
 	.menu-toggle:hover {
-		background-color: #e6e6e6;
+		background-color: rgb(44,84,69);
 	}
 </style>

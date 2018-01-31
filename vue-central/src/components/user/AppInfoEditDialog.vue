@@ -1,7 +1,7 @@
 <template>
 	<div id="user-edit-dialog-component">
 		<!-- 信息编辑模态框 -->
-		<el-dialog title="用户信息" 
+		<el-dialog title="用户信息"
 					:visible.sync="editUserDialog"
 					@open="handlerOpen">
 			<el-form :model="info" ref="userInfoForm" label-width="80px">
@@ -31,8 +31,8 @@
 					</el-col>
 				</el-row>
 				<el-form-item label="手机号码" prop="phone">
-					<el-input 
-						v-model="info.phone" 
+					<el-input
+						v-model="info.phone"
 						clearable
 					/>
 				</el-form-item>
@@ -40,9 +40,9 @@
 					<el-input v-model="info.email" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="出生日期" prop="birthday">
-					<el-date-picker 
-						type="datetime" 
-						placeholder="选择日期" 
+					<el-date-picker
+						type="datetime"
+						placeholder="选择日期"
 						v-model="info.birthday"
 						value-format="yyyy-MM-dd HH:mm:ss"
 						clearable
@@ -92,8 +92,7 @@
 </template>
 <script type="text/javascript">4
 	import {utils} from '@/utils/utils'
-	import {userDao} from '@/db/user'
-	import {roleDao} from '@/db/role'
+	import {db} from '@/db/dao'
 	import {httpStatus} from '@/constant/constant'
 
 	export default {
@@ -108,7 +107,7 @@
 				inputVisible: false,
 				role: '',
 				tmepRole: null
-				
+
 			};
 		},
 		methods: {
@@ -132,7 +131,7 @@
 					var _userId = this.info.id;
 					var _queryRolesUrl = utils.resolvePathParams('/user/query_user_roles.json',_userId);
 					_queryRolesUrl = utils.authorize(_queryRolesUrl);
-					userDao.getUserRoles(_queryRolesUrl).then(res => {
+					db.get(_queryRolesUrl).then(res => {
 						//我编辑信息添加用户角色信息
 						// console.log('roles:',res);
 						this.formatDatas(res.data,this.userRoles)
@@ -141,7 +140,7 @@
 			},
 			queryAllRoles () {
 				var _url = utils.authorize('/role/query_all_available.json');
-				roleDao.getAllAvailableInfos(_url).then(res => {
+				db.get(_url).then(res => {
 					if (res.code == httpStatus.STATUS_OK) {
 						this.formatDatas(res.data,this.roles);
 					}

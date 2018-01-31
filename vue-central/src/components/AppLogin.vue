@@ -21,7 +21,7 @@
 	</div>
 </template>
 <script type="text/javascript">
-	import {loginDao} from '@/db/login'
+	import {db} from '@/db/dao'
 	import store from '@/store/store'
 	import {httpStatus} from '@/constant/constant'
 	export default {
@@ -68,7 +68,7 @@
 							"password": this.loginForm.password
 						}
 						// console.log('submit data is: ',_data);
-						loginDao.login('/login.json',_data).then(res => {
+						db.post('/login.json',_data).then(res => {
 							if (httpStatus.STATUS_OK == res.code) {
 								store.commit('login',res.data);
 								this.$message({

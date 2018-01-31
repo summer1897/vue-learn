@@ -110,7 +110,7 @@
 </template>
 
 <script type="text/javascript">
-    import {permissionDao} from '@/db/permission'
+    import {db} from '@/db/dao'
     import {utils} from '@/utils/utils'
     import {httpStatus} from '@/constant/constant'
 
@@ -193,7 +193,7 @@
             */
             fetchAllTreeNodes() {
                 var _url = utils.authorize('/permission/lists_tree.json');
-                permissionDao.getAllTreeNodes(_url).then(res => {
+                db.get(_url).then(res => {
                     console.log('res: ',res);
                     if (httpStatus.STATUS_OK === res.code) {
                         this.treeNodes = res.data.children;

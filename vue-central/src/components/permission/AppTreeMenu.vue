@@ -20,11 +20,11 @@
 	</div>
 </template>
 <script type="text/javascript">
-	import {userDao} from '@/db/user'
+	import {db} from '@/db/dao'
 	export default {
 		name: 'component-tree-menu',
 		mounted() {
-			userDao.getUserMenus("/user/menus.json").then(res => {
+			db.get("/user/menus.json").then(res => {
 				this.userMenus = res;
 				console.log(res);
 			});

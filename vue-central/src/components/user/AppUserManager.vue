@@ -9,25 +9,25 @@
 					</el-input>
 				</el-col>
 				<el-col :span="16">
-					<el-button 
-						type="warning" 
+					<el-button
+						type="warning"
 						icon="el-icon-search"
 						@click="searchUser"
 					>搜索
 					</el-button>
-					<el-button 
+					<el-button
 						type="success"
 						icon="el-icon-plus"
 						@click="addUserDialog=true"
 					>添加
 					</el-button>
-	  				<el-button 
+	  				<el-button
 	  					type="primary"
 	  					icon="el-icon-edit"
 						@click="editUser"
 	  				>编辑
 	  				</el-button>
-	  				<el-button 
+	  				<el-button
 	  					type="danger"
 	  					icon="el-icon-delete"
 						@click="deleteUser"
@@ -151,9 +151,9 @@
 					<el-input v-model="userInfo.nickName" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="密码" prop="password">
-					<el-input 
-						type="password" 
-						v-model="userInfo.password" 
+					<el-input
+						type="password"
+						v-model="userInfo.password"
 						clearable
 					/>
 				</el-form-item>
@@ -177,8 +177,8 @@
 					</el-col>
 				</el-row>
 				<el-form-item label="手机号码" prop="phone">
-					<el-input 
-						v-model="userInfo.phone" 
+					<el-input
+						v-model="userInfo.phone"
 						clearable
 					/>
 				</el-form-item>
@@ -186,9 +186,9 @@
 					<el-input v-model="userInfo.email" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="出生日期" prop="birthday">
-					<el-date-picker 
-						type="datetime" 
-						placeholder="选择日期" 
+					<el-date-picker
+						type="datetime"
+						placeholder="选择日期"
 						v-model="userInfo.birthday"
 						value-format="yyyy-MM-dd HH:mm:ss"
 						clearable
@@ -204,11 +204,12 @@
 		<!-- END信息模态框 -->
 		<app-info-edit-dialog :info="info"
 							  ref="userEditDialog"
-							  v-on:editSubmit="editUserSubmit"/>
+							  v-on:editSubmit="editUserSubmit"
+    />
 	</div>
 </template>
 <script type="text/javascript">
-	import {userDao} from '@/db/user'
+	import {db} from '@/db/dao'
 	import {utils} from '@/utils/utils'
 	import AppInfoEditDialog from './AppInfoEditDialog'
 	export default {
@@ -297,7 +298,7 @@
 					this.userListsByPage();
 				} else {
 					var _url = utils.authorize('/user/query_like_username.json/' +this.userSearch);
-					userDao.getLikeUserName(_url).then(res => {
+					db.get(_url).then(res => {
 						this.userLists = res;
 					});
 				}
@@ -309,7 +310,7 @@
 				var _url = utils.authorize('/user/add.json');
 				console.log("user info",JSON.stringify(this.userInfo));
 				// var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
-				userDao.addUser(_url,JSON.stringify(this.userInfo))
+				db.post(_url,JSON.stringify(this.userInfo))
 					.then(res => {
 						if (1 == res.code) {
 							this.$message({
@@ -376,7 +377,7 @@
 						// console.log("_ids: ",_ids);
 						var _url = utils.authorize('/user/delete_batch.json/' + _ids);
 						console.log("delete url: ",_url);
-						userDao.deleteUsers(_url)
+						db.get(_url)
 							   .then(res => {
 							   		if (1 == res.code) {
 							   			this.$message({
@@ -409,7 +410,7 @@
 											  this.page.currentPage,
 											  this.page.pageSize);
 				_url = utils.authorize(_url);
-				userDao.getUsersByPage(_url).then(res => {
+				db.get(_url).then(res => {
 					this.page.total = parseInt(res.total);
 					this.userLists = res.userLists;
 				});

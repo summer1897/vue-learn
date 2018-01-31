@@ -1,8 +1,6 @@
 import axios from 'axios'
 
-// axios.defaults.baseURL = "http://localhost:9000/central";
-
-export const fetchGet = function(url,params) {
+function fetchGet(url,params) {
 	return new Promise((resolve,reject) => {
 		axios.get(url,params)
 			 .then(response => {
@@ -14,7 +12,7 @@ export const fetchGet = function(url,params) {
 	});
 }
 
-export const fetchPost = function(url,params) {
+function fetchPost(url,params) {
 	return new Promise((resolve,reject) => {
 		var _headers = {headers: {"Content-Type": "application/json"}};
 		axios.post(url,params,_headers)
@@ -28,3 +26,15 @@ export const fetchPost = function(url,params) {
 	});
 }
 
+export const db = {
+  get(url,params) {
+    return fetchGet(url,params).then(res => {
+      return res;
+    });
+  },
+  post(url,params) {
+    return fetchPost(url,params).then(res => {
+      return res;
+    });
+  }
+}

@@ -1,4 +1,7 @@
-
+* {
+  text-decoration: none;
+  outline: none;
+}
 .all-height {
 	min-height: 100%;
 	height: 100%;

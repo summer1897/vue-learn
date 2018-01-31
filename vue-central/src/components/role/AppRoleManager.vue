@@ -10,25 +10,25 @@
 					</el-input>
 				</el-col>
 				<el-col :span="16">
-					<el-button 
-						type="warning" 
+					<el-button
+						type="warning"
 						icon="el-icon-search"
 						@click="searchRole"
 					>搜索
 					</el-button>
-					<el-button 
+					<el-button
 						type="success"
 						icon="el-icon-plus"
 						@click="addRole"
 					>添加
 					</el-button>
-	  				<el-button 
+	  				<el-button
 	  					type="primary"
 	  					icon="el-icon-edit"
 						@click="editRole"
 	  				>编辑
 	  				</el-button>
-	  				<el-button 
+	  				<el-button
 	  					type="danger"
 	  					icon="el-icon-delete"
 						@click="deleteRole"
@@ -93,8 +93,8 @@
 					:align="align"
 				>
 					<template slot-scope="scope">
-						<el-button 
-							type="text" 
+						<el-button
+							type="text"
 							size="mini"
 							icon="el-icon-edit"
 							@click="authorize(scope.row)"
@@ -103,7 +103,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
-		</div>	
+		</div>
 		<!-- end role lists -->
 
 		<!-- 页面分页组件 -->
@@ -122,8 +122,8 @@
 		<!-- 角色添加弹出框 -->
 		<app-role-add-dialog ref="roleAddDialog" v-on:addRole="addRoleSubmit" />
 		<!-- 角色编辑弹出框 -->
-		<app-role-edit-dialog 
-			ref="roleEditDialog" 
+		<app-role-edit-dialog
+			ref="roleEditDialog"
 			v-on:editRole="editRoleSubmit"
 			:role="editRoleInfo"
 		/>
@@ -140,7 +140,7 @@
 	import AppRoleEditDialog from './AppRoleEditDialog'
 	import AppRoleAuthorizeDialog from './AppRoleAuthorizeDialog'
 	import {utils} from '@/utils/utils'
-	import {roleDao} from '@/db/role'
+	import {db} from '@/db/dao'
 	import {httpStatus} from '@/constant/constant'
 
 	export default {
@@ -159,7 +159,9 @@
 				editRoleInfo: {},
 				authorizeRoleInfo: {
 					id: '',
-					name: ''
+					name: '',
+          //当前编辑角色权限Id
+          permissionIds: [],
 				},
 				selectedItems: [],
 				//分页配置
@@ -206,12 +208,12 @@
 			addRoleSubmit (role) {
 				var _url = utils.authorize('/role/add.json');
 				console.log('add role: ',role);
-				roleDao.addRole(_url,role).then(res => {
+				db.post(_url,role).then(res => {
 					if (res && httpStatus.STATUS_OK == res.code) {
 						this.$message({
-		          			message: res.msg,
-		          			type: 'success'
-    					});
+        			message: res.msg,
+        			type: 'success'
+  					});
     					this.goToFirstPage();
 					} else {
 						this.$message.error(res.msg);
@@ -250,7 +252,7 @@
 									type: 'warning'
 					}).then(() => {
 						var _url = utils.authorize('/role/update.json');
-						roleDao.updateRole(_url,role).then(res => {
+						db.post(_url,role).then(res => {
 							if (res.code === httpStatus.STATUS_OK) {
 								this.$message({
 					   				type: 'success',
@@ -284,7 +286,7 @@
 							var ids = utils.concat('',',','',_ids);
 							var _url = utils.authorize('/role/delete_batch.json/' +ids);
 							console.log('delete url:',_url);
-							roleDao.deleteRoles(_url).then(res => {
+							db.get(_url).then(res => {
 								if (httpStatus.STATUS_OK == res.code) {
 									this.$message({
 						   				type: 'success',
@@ -306,11 +308,40 @@
 				// console.log('role id: ',_role);
 				this.authorizeRoleInfo.id = _role.id;
 				this.authorizeRoleInfo.name = _role.name;
+        var _url = utils.authorize('/role/permission_ids.json/' + _role.id);
+        db.get(_url).then(res => {
+          if (httpStatus.STATUS_OK === res.code) {
+            console.log('permission id: ',res.data);
+            this.authorizeRoleInfo.permissionIds = res.data;
+          }
+        });
 				//打开角色授权框
 				this.$refs.roleAuthorizeDialog.authorizeDialogVisible = true;
 			},
 			roleAuthorizeSubmit (_permissionsIds) {
 				console.log('authorize permission ids: ',_permissionsIds);
+        if (!_permissionsIds || _permissionsIds.length < 0) {
+          this.$message({
+            message: '勾选角色权限信息',
+            type: 'warning'
+          });
+        } else {
+          var _pids = utils.concat('',',','',_permissionsIds);
+          var _url = utils.resolvePathParams('/role/authorization.json',
+                                             this.authorizeRoleInfo.id,_pids);
+          _url = utils.authorize(_url);
+          console.log('url: ',_url);
+          db.get(_url).then(res => {
+            if (httpStatus.STATUS_OK === res.code) {
+              this.$message({
+                message: '角色授权成功',
+                type: 'success'
+              });
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
+        }
 			},
 			/*
 			* 分页插件
@@ -344,7 +375,7 @@
 											  this.page.currentPage,
 											  this.page.pageSize);
 				_url = utils.authorize(_url);
-				roleDao.getRolesByPage(_url).then(res => {
+				db.get(_url).then(res => {
 					// console.log('res:',res);
 					if (res && res.code == httpStatus.STATUS_OK) {
 						var _data = res.data;
@@ -359,7 +390,7 @@
 													   this.page.currentPage,
 													   this.page.pageSize);
 				_url = utils.authorize(_url);
-				roleDao.getLikeName(_url).then(res => {
+				db.get(_url).then(res => {
 					if (res.code == httpStatus.STATUS_OK) {
 						// console.log('query role info:',res);
 						this.page.total = parseInt(res.data.total);
@@ -367,7 +398,7 @@
 						this.roleLists = res.data.roleLists;
 					}
 				});
-			} 
+			}
 		},
 		components: {
 			AppRoleAddDialog,AppRoleEditDialog,AppRoleAuthorizeDialog

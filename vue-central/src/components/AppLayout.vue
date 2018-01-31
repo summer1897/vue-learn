@@ -1,8 +1,10 @@
 <template>
-  <div id="component-layout" class="all-height">
-    <el-row class="all-height">
-    	<el-col :span="left" class="all-height">
-    		  <app-aside/>
+  <div id="component-layout">
+    <el-row>
+    	<el-col :span="left">
+        <EasyScrollbar>
+    		  <app-aside :style="{height:pageHeight}"/>
+        </EasyScrollbar>
     	</el-col>
     	<el-col :span="right">
     		  <app-main/>
@@ -19,11 +21,17 @@ import AppContent from './AppContent'
 export default {
   name: 'component-layout',
   created () {
+    // alert('page height: ' + document.body.clientHeight);
     this.$root.Bus.$on('collapseToggle',val => {
       // console.log('value:',val);
       this.left = val.leftSpan;
       this.right = val.rightSpan;
     });
+  },
+  computed: {
+    pageHeight () {
+      return document.body.clientHeight + 'px';
+    }
   },
   data () {
     return {
