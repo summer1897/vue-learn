@@ -15,6 +15,7 @@ author:summer
 			<el-tree
         :data="permissionTrees"
         :props="defaultProps"
+        :default-expanded-keys="defaultExpandKeys"
         show-checkbox
         check-strictly
         node-key="id"
@@ -45,10 +46,12 @@ author:summer
 				//角色权限Id
 				permissionIds: [],
 				//树形控件默认使用treeNodes中的字段
-		        defaultProps: {
-		            children: 'children',
-		            label: 'name'
-		        }
+        defaultProps: {
+            children: 'children',
+            label: 'name'
+        },
+        //默认展开节点keys
+        defaultExpandKeys: []
 			};
 		},
 		methods: {
@@ -62,9 +65,7 @@ author:summer
 	        this.setRolePermission();
 	      },
 			authorizeCancel () {
-				this.authorizeDialogVisible = !this.authorizeDialogVisible;
-		        //清空权限勾选项
-		        this.$refs.permissionTrees.setCheckedKeys([]);
+				this.destory();
 			},
 			authorizeSubmit () {
 				let _checkedKeys = this.$refs.permissionTrees.getCheckedKeys();
@@ -74,8 +75,7 @@ author:summer
 				// console.log('selected keys:',_checkedKeys);
 				console.log('origin pids:',this.permissionIds);
 				this.$emit('roleAuthorize',_addingPids,_deletingPids);
-        		this.$refs.permissionTrees.setCheckedKeys([]);
-        		this.authorizeDialogVisible = !this.authorizeDialogVisible;
+    		this.destory();
 			},
 			/*
 			* 找出相对于permissionIds中新添加的权限id,
@@ -122,29 +122,35 @@ author:summer
 
 				return _deletingPermissionIds;
 			},
-		    setRolePermission () {
-		        var _url = utils.authorize('/role/permission_ids.json/' + this.role.id);
-		        db.get(_url).then(res => {
-		          if (httpStatus.STATUS_OK === res.code) {
-		            console.log('dao:permission id: ',res.data);
-		            this.permissionIds = res.data;
-		            if (res.data.length > 0) {
-		        		this.$refs.permissionTrees.setCheckedKeys(res.data);
-		        	}
-		          } else {
-		          	this.$message.error('加载' + this.role.name + '权限信息失败');
-		          }
-		        });
-		    },
+	    setRolePermission () {
+	        let _url = utils.authorize('/role/permission_ids.json/' + this.role.id);
+	        db.get(_url).then(res => {
+	          if (httpStatus.STATUS_OK === res.code) {
+	            console.log('dao:permission id: ',res.data);
+	            this.permissionIds = res.data;
+	            if (res.data.length > 0) {
+	        		this.$refs.permissionTrees.setCheckedKeys(res.data);
+              this.defaultExpandKeys.push(...res.data);
+	        	}
+	          } else {
+	          	this.$message.error('加载' + this.role.name + '权限信息失败');
+	          }
+	        });
+	    },
 			getPermissionTree () {
-				var _url = utils.authorize('/permission/lists_tree.json');
-		        db.get(_url).then(res => {
-		            // console.log('res: ',res);
-		            if (httpStatus.STATUS_OK === res.code) {
-		                this.permissionTrees = res.data.children;
-		            }
-		        });
-			}
+				let _url = utils.authorize('/permission/lists_tree.json');
+        db.get(_url).then(res => {
+            // console.log('res: ',res);
+            if (httpStatus.STATUS_OK === res.code) {
+                this.permissionTrees = res.data.children;
+            }
+        });
+			},
+      destory () {
+        this.$refs.permissionTrees.setCheckedKeys([]);
+        this.defaultExpandKeys = [];
+    		this.authorizeDialogVisible = !this.authorizeDialogVisible;
+      }
 		}
 	}
 </script>

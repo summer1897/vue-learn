@@ -314,33 +314,42 @@
 			roleAuthorizeSubmit (addingPids,deletingPids) {
 				console.log('adding pids:',addingPids);
 				console.log('deleting pids:',deletingPids);
-		        if (addingPids.length > 0 || deletingPids.length > 0) {
-		          let _addingPids = utils.concat('',',','',addingPids);
-		          let _deletingPids = utils.concat('',',','',deletingPids);
-		          if ('' === _addingPids) {
-		          	_addingPids = '-1';
-		          }
-		          if ('' === _deletingPids) {
-		          	_deletingPids = '-1';
-		          }
-		          let _url = utils.resolvePathParams('/role/authorization.json',
-		                                             this.authorizeRoleInfo.id,
-		                                             _addingPids,
-		                                             _deletingPids);
-		          _url = utils.authorize(_url);
-		          console.log('url: ',_url);
-		          db.get(_url).then(res => {
-		            if (httpStatus.STATUS_OK === res.code) {
-		              this.$message({
-		                message: '角色授权成功',
-		                type: 'success'
-		              });
-		            } else {
-		              this.$message.error(res.msg);
-		            }
-		          });
-		        }
-			},
+        if (addingPids.length > 0 || deletingPids.length > 0) {
+          let _addingPids = utils.concat('',',','',addingPids);
+          let _deletingPids = utils.concat('',',','',deletingPids);
+          if ('' === _addingPids) {
+          	_addingPids = '-1';
+          }
+          if ('' === _deletingPids) {
+          	_deletingPids = '-1';
+          }
+          //post请求数据封装
+          let rolePermissionVo = {
+            roleId: this.authorizeRoleInfo.id,
+            addingPermissionIds: _addingPids,
+            deletingPermissionIds: _deletingPids
+          };
+          let _url = utils.authorize('/role/authorization.json');
+          console.log('url: ',_url);
+          db.post(_url,rolePermissionVo).then(res => {
+            if (httpStatus.STATUS_OK === res.code) {
+              this.$message({
+                message: '角色授权成功',
+                type: 'success'
+              });
+            } else {
+              this.$message.error(res.msg);
+            }
+          });
+        } else if (0 === addingPids.length && 0 === deletingPids.length) {
+          this.$message({
+            message: '操作成功',
+            type: 'success'
+          });
+        } else {
+          this.$message.error('操作失败');
+        }
+      },
 			/*
 			* 分页插件
 			*/
