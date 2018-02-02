@@ -5,7 +5,7 @@
 				<el-col :span="8">
 					<el-input
 						placeholder="请输入用户名"
-						v-model="userSearch">
+						v-model="userSearchName">
 					</el-input>
 				</el-col>
 				<el-col :span="16">
@@ -18,7 +18,7 @@
 					<el-button
 						type="success"
 						icon="el-icon-plus"
-						@click="addUserDialog=true"
+						@click="addUser"
 					>添加
 					</el-button>
 	  				<el-button
@@ -141,89 +141,31 @@
 		    </el-pagination>
 		</div>
 
-		<!-- 信息模态框 -->
-		<el-dialog title="添加用户" :visible.sync="addUserDialog">
-			<el-form :model="userInfo" ref="userInfoForm" label-width="80px">
-				<el-form-item label="用户名" prop="userName">
-					<el-input v-model="userInfo.userName" clearable></el-input>
-				</el-form-item>
-				<el-form-item label="昵称" prop="nickName">
-					<el-input v-model="userInfo.nickName" clearable></el-input>
-				</el-form-item>
-				<el-form-item label="密码" prop="password">
-					<el-input
-						type="password"
-						v-model="userInfo.password"
-						clearable
-					/>
-				</el-form-item>
-				<el-row>
-					<el-col :span="12">
-						<el-form-item label="性别" prop="sex">
-							<el-select v-model="userInfo.sex" placeholder="请选性别">
-								<el-option label="男" value="0"></el-option>
-								<el-option label="女" value="1"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-					<el-col :span="12">
-						<el-form-item label="状态" prop="locked">
-							<el-select v-model="userInfo.locked" placeholder="请选状态">
-								<el-option label="未激活" value="0"></el-option>
-								<el-option label="正常" value="1"></el-option>
-								<el-option label="已禁用" value="2"></el-option>
-							</el-select>
-						</el-form-item>
-					</el-col>
-				</el-row>
-				<el-form-item label="手机号码" prop="phone">
-					<el-input
-						v-model="userInfo.phone"
-						clearable
-					/>
-				</el-form-item>
-				<el-form-item label="邮箱" prop="email">
-					<el-input v-model="userInfo.email" clearable></el-input>
-				</el-form-item>
-				<el-form-item label="出生日期" prop="birthday">
-					<el-date-picker
-						type="datetime"
-						placeholder="选择日期"
-						v-model="userInfo.birthday"
-						value-format="yyyy-MM-dd HH:mm:ss"
-						clearable
-						style="width:100%;"
-					/>
-				</el-form-item>
-			</el-form>
-			<div slot="footer" class="dialog-footer">
-				<el-button @click="addUserDialog = false">取 消</el-button>
-				<el-button type="primary" @click="addUserSubmit">确 定</el-button>
-			</div>
-		</el-dialog>
-		<!-- END信息模态框 -->
+		<!-- 用户信息添加弹出框 -->
+		<app-user-add-dialog ref="userAddDialog" @userAdd="userAddSubmit" />
+    <!-- 用户信息编辑弹出框 -->
 		<app-info-edit-dialog :info="info"
-							  ref="userEditDialog"
-							  v-on:editSubmit="editUserSubmit"
+		  ref="userEditDialog"
+		  @editSubmit="editUserSubmit"
     />
 	</div>
 </template>
 <script type="text/javascript">
 	import {db} from '@/db/dao'
 	import {utils} from '@/utils/utils'
+  import {httpStatus} from '@/constant/constant'
 	import AppInfoEditDialog from './AppInfoEditDialog'
+  import AppUserAddDialog from './AppUserAddDialog'
 	export default {
 		name: 'component-user-manager',
 		mounted () {
-			this.userListsByPage();
+			this.goToFirstPage();
 		},
 		data () {
 			return {
 				userLists: [],
 				align: 'center',
-				userSearch: '',
-				addUserDialog: false,
-				editUserDialog: false,
+				userSearchName: '',
 				formLabelWidth: '120px',
 				userInfo: {
 					id: '',
@@ -245,7 +187,8 @@
 					pageSize: 5,
 					pageSizes: [5,10,20,30],
 					total: null,
-					request_url: '/user/lists_by_pagination.json'
+					request_url: '/user/lists_by_pagination.json',
+          search_url: '/user/query_like_username.json'
 				}
 			}
 		},
@@ -294,40 +237,38 @@
 				/*
 				* 用户名模糊查询
 				*/
-				if ('' == this.userSearch) {
-					this.userListsByPage();
-				} else {
-					var _url = utils.authorize('/user/query_like_username.json/' +this.userSearch);
-					db.get(_url).then(res => {
-						this.userLists = res;
-					});
-				}
+				if (this.userSearchName) {
+          this.queryAllOrByName();
+        } else {
+          this.goToFirstPage();
+        }
 			},
-			addUserSubmit () {
+      addUser () {
+        this.$refs.userAddDialog.addUserDialog=true;
+      },
+			userAddSubmit (userInfo) {
 				/*
 				* 添加用户信息提交
 				*/
 				var _url = utils.authorize('/user/add.json');
-				console.log("user info",JSON.stringify(this.userInfo));
+				console.log("user info",JSON.stringify(userInfo));
 				// var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
-				db.post(_url,JSON.stringify(this.userInfo))
-					.then(res => {
-						if (1 == res.code) {
-							this.$message({
-			          			message: res.msg,
-			          			type: 'success'
-        					});
-        					this.userListsByPage();
-        					// this.userLists.push(_userInfo);
-        					this.userFormReset('userInfoForm');
-						} else {
-							this.$message.error(res.msg);
-						}
-					}).catch(err => {
-						console.log("error: ",err);
-					});
-				// console.log("user info:",this.userLists);
-				this.addUserDialog = !this.addUserDialog;
+				// db.post(_url,JSON.stringify(this.userInfo))
+				// 	.then(res => {
+				// 		if (1 == res.code) {
+				// 			this.$message({
+			  //         			message: res.msg,
+			  //         			type: 'success'
+        // 					});
+        // 					this.queryAllOrByName();
+        // 					// this.userLists.push(_userInfo);
+        // 					this.userFormReset('userInfoForm');
+				// 		} else {
+				// 			this.$message.error(res.msg);
+				// 		}
+				// 	}).catch(err => {
+				// 		console.log("error: ",err);
+				// 	});
 			},
 			editUser () {
 				var _data = this.selectedItems;
@@ -397,30 +338,55 @@
 			},
 			handleSizeChange(val) {
 				this.page.pageSize = val;
-				this.userListsByPage();
-				// console.log(`每页 ${val} 条`);
+				this.queryAllOrByName();
 			},
 			handleCurrentChange(val) {
 				this.page.currentPage = val;
-				this.userListsByPage();
-				console.log(`当前页: ${val}`);
+				this.queryAllOrByName();
 			},
+      goToFirstPage() {
+        this.page.currentPage = 1;
+        this.userListsByPage();
+      },
+      queryAllOrByName() {
+        if (this.userSearchName) {
+          this.userListsByNameAndPage();
+        } else {
+          this.userListsByPage();
+        }
+      },
 			userListsByPage() {
 				var _url = utils.resolvePathParams(this.page.request_url,
 											  this.page.currentPage,
 											  this.page.pageSize);
 				_url = utils.authorize(_url);
 				db.get(_url).then(res => {
-					this.page.total = parseInt(res.total);
-					this.userLists = res.userLists;
+          console.log('res:',res);
+					this.page.total = parseInt(res.data.total);
+					this.userLists = res.data.userLists;
 				});
 			},
+      userListsByNameAndPage() {
+        var _url = utils.resolvePathParams(this.page.search_url,
+                                          this.userSearchName,
+                  											  this.page.currentPage,
+                  											  this.page.pageSize);
+				_url = utils.authorize(_url);
+        db.get(_url).then(res => {
+          if (res.code === httpStatus.STATUS_OK) {
+            this.page.total = parseInt(res.data.total);
+            this.userLists = res.data.userLists;
+          } else {
+            this.$message.error('没有查询结果');
+          }
+        });
+      },
 			userFormReset(formName) {
 				this.$refs[formName].resetFields();
 			}
 		},
 		components: {
-			AppInfoEditDialog
+			AppInfoEditDialog,AppUserAddDialog
 		}
 	}
 </script>
