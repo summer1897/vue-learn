@@ -312,17 +312,11 @@
 				this.$refs.roleAuthorizeDialog.authorizeDialogVisible = true;
 			},
 			roleAuthorizeSubmit (addingPids,deletingPids) {
-				console.log('adding pids:',addingPids);
-				console.log('deleting pids:',deletingPids);
+				// console.log('adding pids:',addingPids);
+				// console.log('deleting pids:',deletingPids);
         if (addingPids.length > 0 || deletingPids.length > 0) {
           let _addingPids = utils.concat('',',','',addingPids);
           let _deletingPids = utils.concat('',',','',deletingPids);
-          if ('' === _addingPids) {
-          	_addingPids = '-1';
-          }
-          if ('' === _deletingPids) {
-          	_deletingPids = '-1';
-          }
           //post请求数据封装
           let rolePermissionVo = {
             roleId: this.authorizeRoleInfo.id,
@@ -330,7 +324,7 @@
             deletingPermissionIds: _deletingPids
           };
           let _url = utils.authorize('/role/authorization.json');
-          console.log('url: ',_url);
+          console.log('rolePermissionVo: ',rolePermissionVo);
           db.post(_url,rolePermissionVo).then(res => {
             if (httpStatus.STATUS_OK === res.code) {
               this.$message({

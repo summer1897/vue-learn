@@ -55,22 +55,23 @@ author:summer
 			};
 		},
 		methods: {
-	      /*
-	      * 模态框打开事件处理
-	      */
-	      initAuthorizeDialog () {
-	        //获取权限信息，并构建权限树
-	        this.getPermissionTree();
-	        //勾选当前角色具有的权限
-	        this.setRolePermission();
-	      },
+      /*
+      * 模态框打开事件处理
+      */
+      initAuthorizeDialog () {
+        //获取权限信息，并构建权限树
+        this.getPermissionTree();
+        //勾选当前角色具有的权限
+        this.setRolePermission();
+      },
 			authorizeCancel () {
 				this.destory();
 			},
 			authorizeSubmit () {
 				let _checkedKeys = this.$refs.permissionTrees.getCheckedKeys();
-				console.log('selected pids:',_checkedKeys);
+				console.log('1.selected pids:',_checkedKeys);
 				let _addingPids = this.getAddingPermissionIds(_checkedKeys);
+        // console.log('2.selected pids:',_checkedKeys);
 				let _deletingPids = this.getDeletingPermissionIds(_checkedKeys);
 				// console.log('selected keys:',_checkedKeys);
 				console.log('origin pids:',this.permissionIds);
@@ -82,15 +83,15 @@ author:summer
 			* 即筛选出permissionId中没有的权限id
 			*/
 			getAddingPermissionIds (_checkedKeys) {
-				let addingPermissionIds = [];
+				let _addingPermissionIds = [];
 				if (_checkedKeys.length > 0) {
 					let pid = _checkedKeys.filter(el => {
 						return this.permissionIds.indexOf(el) < 0;
 					});
 					// console.log('filter adding pids:',pid);
-					addingPermissionIds.push(...pid);
+					_addingPermissionIds.push(...pid);
 				}
-				return addingPermissionIds;
+				return _addingPermissionIds;
 			},
 			/*
 			* 获取相对应permissionIds数组中，要删除的权限id
@@ -103,17 +104,18 @@ author:summer
 				//筛选出_checkedKey(这次选中)，且原permissionIds中
 				//也有的权限id
 				if (_checkedKeys.length > 0) {
+          // debugger;
 					let pid = _checkedKeys.filter(pid => {
-						return this.permissionIds.indexOf(pid) >= 0;
+						return _originPermissionIds.indexOf(pid) >= 0;
 					});
 					_pidHasBefore.push(...pid);
 				}
-
+        
 				/*
 				* _originPermissionIds减去_pidHasBefore就等于，
 				* 这次要删除的权限
 				*/
-				if (_pidHasBefore.length > 0) {
+				if (_checkedKeys.length > 0) {
 					let pid = _originPermissionIds.filter(pid => {
 						return _pidHasBefore.indexOf(pid) < 0;
 					});
@@ -129,9 +131,9 @@ author:summer
 	            console.log('dao:permission id: ',res.data);
 	            this.permissionIds = res.data;
 	            if (res.data.length > 0) {
-	        		this.$refs.permissionTrees.setCheckedKeys(res.data);
-              this.defaultExpandKeys.push(...res.data);
-	        	}
+  	        		this.$refs.permissionTrees.setCheckedKeys(res.data);
+                this.defaultExpandKeys.push(...res.data);
+  	        	}
 	          } else {
 	          	this.$message.error('加载' + this.role.name + '权限信息失败');
 	          }
