@@ -120,11 +120,11 @@
 		</div>
 
 		<!-- 角色添加弹出框 -->
-		<app-role-add-dialog ref="roleAddDialog" v-on:addRole="addRoleSubmit" />
+		<app-role-add-dialog ref="roleAddDialog" @addRole="addRoleSubmit" />
 		<!-- 角色编辑弹出框 -->
 		<app-role-edit-dialog
 			ref="roleEditDialog"
-			v-on:editRole="editRoleSubmit"
+			@editRole="editRoleSubmit"
 			:role="editRoleInfo"
 		/>
 		<!-- 角色授权框 -->
@@ -214,7 +214,7 @@
         			message: res.msg,
         			type: 'success'
   					});
-    					this.goToFirstPage();
+  					this.goToFirstPage();
 					} else {
 						this.$message.error(res.msg);
 					}

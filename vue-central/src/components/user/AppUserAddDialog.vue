@@ -1,6 +1,6 @@
 <template>
   <div id="component-add-user-dialog">
-    <el-dialog title="添加用户" :visible.sync="addUserDialog">
+    <el-dialog title="添加用户" :visible.sync="addUserDialog" @open="dialogOpen">
 			<el-form
         :model="userInfo"
         ref="userInfoForm"
@@ -68,6 +68,9 @@
   </div>
 </template>
 <script type="text/javascript">
+  import {userValidate} from './validate'
+  import {utils} from '@/utils/utils'
+
   export default {
     name: 'component-add-user-dialog',
     data () {
@@ -84,46 +87,25 @@
 					email: '',
 					birthday: ''
         },
-        userValidateRules: {
-          userName: [
-            { required: true, message: '请输入用户名',trigger: 'blur' }
-          ],
-          nickName: [
-            { required: true, message: '请输入用户昵称',trigger: 'blur' }
-          ],
-          password: [
-            { required: true, message: '请输入密码', trigger: 'blur' },
-            { min: 6, message: '密码长度至少为六位',trigger: 'blur'}
-          ],
-          sex: [
-            { required: true, message: '请选择性别', trigger: 'blur,change' }
-          ],
-          locked: [
-            { required: true, message: '请选择用户状态', trigger: 'blur,change' }
-          ],
-          phone: [
-            { required: true, message: '请填写手机号', trigger: 'blur'},
-            { type: 'number', min: 11, max: 11, message: '请输入正确的手机格式', trigger: 'change' }
-          ],
-          email: [
-            { required: true, message: '请输入邮箱地址', trigger: 'blur' },
-            { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
-          ],
-          birthday: [
-            { required: true, message: '请选择出生日期', trigger: 'blur' }
-          ]
-        }
+        userValidateRules: {}
       };
     },
     methods: {
+      dialogOpen() {
+        this.userValidateRules = userValidate.userValidateRules;
+        // console.log('validate rules:',userValidate.userValidateRules);
+      },
       addCancel() {
         this.destroy();
       },
       addUserSubmit() {
         this.$refs.userInfoForm.validate(valid => {
           if (valid) {
-            this.$emit('userAdd',this.userInfo);
+            var _userInfo = utils.copy(this.userInfo);
+            this.$emit('userAdd',_userInfo);
             this.destroy();
+          } else {
+            console.log('submit error');
           }
         });
       },

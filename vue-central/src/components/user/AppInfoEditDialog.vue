@@ -4,7 +4,7 @@
 		<el-dialog title="用户信息"
 					:visible.sync="editUserDialog"
 					@open="handlerOpen">
-			<el-form :model="info" ref="userInfoForm" label-width="80px">
+			<el-form :model="info" ref="userInfoForm" :rules="userValidateRules" label-width="80px">
 				<el-form-item label="用户名" prop="userName">
 					<el-input v-model="info.userName" disabled></el-input>
 				</el-form-item>
@@ -94,11 +94,11 @@
 	import {utils} from '@/utils/utils'
 	import {db} from '@/db/dao'
 	import {httpStatus} from '@/constant/constant'
+	import {userValidate} from './validate'
 
 	export default {
 		name: 'user-edit-dialog-component',
 		props: ['info'],
-
 		data () {
 			return {
 				editUserDialog: false,
@@ -106,17 +106,24 @@
 				userRoles: [],
 				inputVisible: false,
 				role: '',
-				tmepRole: null
-
+				tmepRole: null,
+				userValidateRules: {}
 			};
 		},
 		methods: {
 			handlerOpen() {
 				this.queryUserRoles();
+				this.userValidateRules = userValidate.userValidateRules;
 			},
 			editUserSubmit () {
-				this.$emit('editSubmit',this.info);
-				this.editUserDialog = !this.editUserDialog;
+				this.$refs.userInfoForm.validate(valid => {
+          if (valid) {
+            this.$emit('editSubmit',this.info);
+						this.editUserDialog = !this.editUserDialog;
+          } else {
+            console.log('submit error');
+          }
+        });
 			},
 			editCancel () {
 				this.resetForm('userInfoForm');

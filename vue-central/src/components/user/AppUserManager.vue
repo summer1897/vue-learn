@@ -167,18 +167,6 @@
 				align: 'center',
 				userSearchName: '',
 				formLabelWidth: '120px',
-				userInfo: {
-					id: '',
-					userName: '',
-					nickName: '',
-					password: '',
-					sex: '',
-					locked: '',
-					phone: '',
-					email: '',
-					birthday: ''
-					// roles: []
-				},
 				info: {},
 				selectedItems: [],
 				//分页配置
@@ -253,22 +241,21 @@
 				var _url = utils.authorize('/user/add.json');
 				console.log("user info",JSON.stringify(userInfo));
 				// var _userInfo = JSON.parse(JSON.stringify(this.userInfo));
-				// db.post(_url,JSON.stringify(this.userInfo))
-				// 	.then(res => {
-				// 		if (1 == res.code) {
-				// 			this.$message({
-			  //         			message: res.msg,
-			  //         			type: 'success'
-        // 					});
-        // 					this.queryAllOrByName();
-        // 					// this.userLists.push(_userInfo);
-        // 					this.userFormReset('userInfoForm');
-				// 		} else {
-				// 			this.$message.error(res.msg);
-				// 		}
-				// 	}).catch(err => {
-				// 		console.log("error: ",err);
-				// 	});
+				db.post(_url,userInfo)
+					.then(res => {
+						if (1 == res.code) {
+							this.$message({
+			          			message: res.msg,
+			          			type: 'success'
+        					});
+        			this.goToFirstPage();
+        					// this.userLists.push(_userInfo);
+						} else {
+							this.$message.error(res.msg);
+						}
+					}).catch(err => {
+						console.log("error: ",err);
+					});
 			},
 			editUser () {
 				var _data = this.selectedItems;
@@ -320,7 +307,7 @@
 						console.log("delete url: ",_url);
 						db.get(_url)
 							   .then(res => {
-							   		if (1 == res.code) {
+							   		if (httpStatus.STATUS_OK == res.code) {
 							   			this.$message({
 							   				type: 'success',
 							   				message: res.msg

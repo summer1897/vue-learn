@@ -58,9 +58,15 @@ export const utils = {
 	/*
 	* 问访问URL授权
 	*/
-	authorize(url) {
+	authorize(url,...params) {
 		var _url = url;
 		if ('' !== _url && undefined !== _url && _url.length > 0) {
+			//添加路径参数
+			if (params && params.length > 0) {
+				for (var i = 0; i < params.length; ++i) {
+					_url += '/' + params[i];
+				}
+			}
 			_url += '?' + constants.ACCESS_TOKEN + '=' + store.state.token;
 		}
 		return _url;
