@@ -1,11 +1,10 @@
 <template>
 	<div id="editUser" style="height: 400px;overflow-y:scroll;">
-		<el-dialog :visible.sync="openEditUserDialog"
-				   title="编辑"
-				   append-to-body>
-			<div class="dialog-foot" slot="footer">
-				<el-button type="primary" icon="el-icon-plus" @click="editSubmit">
-					确定
+		<el-dialog 
+			:visible.sync="openEditUserDialog"
+		    title="编辑"
+		    append-to-body
+		>
 			<el-form ref="userForm" :model="userForm" label-width="80px">
 				<el-form-item label="姓名">
 					<el-input v-model="userForm.name" au-complete="off" value="msg.name" disabled/>

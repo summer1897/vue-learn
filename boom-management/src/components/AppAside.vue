@@ -2,7 +2,8 @@
 		<el-menu default-active="1-4-1" 
 			class="el-menu-vertical-demo hidden-sm-and-down s-aside-menu" 
 			@open="handleOpen" 
-			@close="handleClose" 
+			@close="handleClose"
+      @mouseover="handleMouseOver" 
 			active-text-color="#42b983"
 			:collapse="isCollapse"
 			router
@@ -102,7 +103,27 @@
         				icon: 'el-icon-edit-outline',
         				index: 'addNews',
         				title: '发布新闻'
-        			}
+        			},
+              {
+                icon: 'el-icon-edit-outline',
+                index: 'addNews',
+                title: '发布新闻'
+              },
+              {
+                icon: 'el-icon-edit-outline',
+                index: 'addNews',
+                title: '发布新闻'
+              },
+              {
+                icon: 'el-icon-edit-outline',
+                index: 'addNews',
+                title: '发布新闻'
+              },
+              {
+                icon: 'el-icon-edit-outline',
+                index: 'addNews',
+                title: '发布新闻'
+              }
         		]
         	},
         	{
@@ -147,6 +168,9 @@
       },
       handleClose(key, keyPath) {
         console.log(key, keyPath);
+      },
+      handleMouseOver () {
+        
       }
     }
   }
